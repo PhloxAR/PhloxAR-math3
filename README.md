@@ -18,7 +18,6 @@ Features:
 License
 ---------------
 BSD 3-clause "New" or "Revised" License
-
 Created by Adam Griffiths.
 Copyright (c) 2012, Twisted Pair Development.
 Copyright (c) 2016, Matthias Y. Chen
