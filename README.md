@@ -15,6 +15,11 @@ Features:
   * Axis Aligned Bounding Box (AABB / AAMBB)
   * Geometric collision / intersection testing
 
+Requirements
+------------
+Numpy
+multipledispatch
+
 License
 ---------------
 BSD 3-clause "New" or "Revised" License
