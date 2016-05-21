@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-"""Provide functions for the manipulation of integers.
 """
+Provide functions for the manipulation of integers.
+"""
+
 
 def count_bits(value):
     """Counts the number of bits set to 1 in an integer.
@@ -26,6 +28,5 @@ def count_bits(value):
     while (value):
         count += (value & 1)
         value >>= 1
-    
-    return count
 
+    return count

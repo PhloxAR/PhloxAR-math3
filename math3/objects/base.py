@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import numpy as np
-from math3 import vector, vector3
+from ..funcs import vec3, vec
+
 
 class NpProxy(object):
     def __init__(self, index):
@@ -13,9 +14,12 @@ class NpProxy(object):
     def __set__(self, obj, value):
         obj[self._index] = value
 
+
 class BaseObject(np.ndarray):
+
     _module = None
     _shape = None
+
     def __new__(cls, obj):
         # ensure the object matches the required shape
         obj.shape = cls._shape
@@ -42,7 +46,9 @@ class BaseObject(np.ndarray):
         self[:] = self.__div__(other)
         return self
 
+
 class BaseMatrix(BaseObject):
+
     @classmethod
     def identity(cls, dtype=None):
         """Creates an identity Matrix.
@@ -93,6 +99,7 @@ class BaseMatrix(BaseObject):
         """
         return type(self)(self._module.inverse(self))
 
+
 class BaseVector(BaseObject):
     @classmethod
     def from_matrix44_translation(cls, matrix, dtype=None):
@@ -115,32 +122,37 @@ class BaseVector(BaseObject):
 
     @length.setter
     def length(self, length):
-        self[:] = vector.set_length(self, length)
+        self[:] = vec.set_length(self, length)
 
     def dot(self, other):
-        return vector.dot(self, type(self)(other))
+        return vec.dot(self, type(self)(other))
 
     def cross(self, other):
-        return type(self)(vector3.cross(self[:3], other[:3]))
+        return type(self)(vec3.cross(self[:3], other[:3]))
 
     def interpolate(self, other, delta):
-        return type(self)(vector.interpolate(self, type(self)(other), delta))
+        return type(self)(vec.interpolate(self, type(self)(other), delta))
 
     def normal(self, v2, v3, normalise_result=True):
-        return type(self)(vector3.generate_normals(self, type(self)(v2), type(self)(v3), normalise_result))
+        return type(self)(vec3.generate_normals(self, type(self)(v2), type(self)(v3), normalise_result))
+
 
 class BaseQuaternion(BaseObject):
     pass
 
+
 # pre-declarations to prevent circular imports
-class BaseMatrix33(BaseMatrix):
+class BaseMatrix3(BaseMatrix):
     pass
 
-class BaseMatrix44(BaseMatrix):
+
+class BaseMatrix4(BaseMatrix):
     pass
+
 
 class BaseVector3(BaseVector):
     pass
+
 
 class BaseVector4(BaseVector):
     pass

@@ -3,7 +3,8 @@
 """
 from __future__ import absolute_import, division, print_function
 import numpy as np
-from .utils import all_parameters_as_numpy_arrays, parameters_as_numpy_arrays
+
+from math3.utils import all_parameters_as_numpy_arrays, parameters_as_numpy_arrays
 
 
 @all_parameters_as_numpy_arrays
@@ -33,10 +34,9 @@ def normalise(vec):
     # calculate the length
     # this is a duplicate of length(vec) because we
     # always want an array, even a 0-d array.
-    return (vec.T  / np.sqrt(np.sum(vec**2,axis=-1))).T
+    return (vec.T / np.sqrt(np.sum(vec ** 2, axis=-1))).T
 
 
-    
 @all_parameters_as_numpy_arrays
 def squared_length(vec):
     """Calculates the squared length of a vector.
@@ -52,6 +52,7 @@ def squared_length(vec):
     lengths = np.sum(vec ** 2., axis=-1)
 
     return lengths
+
 
 @all_parameters_as_numpy_arrays
 def length(vec):
@@ -76,7 +77,7 @@ def length(vec):
         Otherwise the result will be an array of scalars with shape
         vec.ndim with the last dimension being size 1.
     """
-    return np.sqrt(np.sum(vec**2,axis=-1))
+    return np.sqrt(np.sum(vec ** 2, axis=-1))
 
 
 @parameters_as_numpy_arrays('vec')
@@ -103,9 +104,9 @@ def set_length(vec, len):
     # this is a duplicate of length(vec) because we
     # always want an array, even a 0-d array.
 
-    return (vec.T  / np.sqrt(np.sum(vec**2,axis=-1)) * len).T
+    return (vec.T / np.sqrt(np.sum(vec ** 2, axis=-1)) * len).T
 
-    
+
 @all_parameters_as_numpy_arrays
 def dot(v1, v2):
     """Calculates the dot product of two vectors.
@@ -119,6 +120,7 @@ def dot(v1, v2):
         vec.ndim with the last dimension being size 1.
     """
     return np.sum(v1 * v2, axis=-1)
+
 
 @parameters_as_numpy_arrays('v1', 'v2')
 def interpolate(v1, v2, delta):
@@ -145,7 +147,7 @@ def interpolate(v1, v2, delta):
     # this horrible code curtousey of this comment:
     # http://stackoverflow.com/questions/5448322/temporal-interpolation-in-numpy-matplotlib
     return v1 + ((v2 - v1) * delta)
-    #return v1 * (1.0 - delta ) + v2 * delta
+    # return v1 * (1.0 - delta ) + v2 * delta
     t = delta
     t0 = 0.0
     t1 = 1.0

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Provide functions for the creation and manipulation of 3D Spheres.
+"""
+Provide functions for the creation and manipulation of 3D Spheres.
 
 Sphere are represented using a numpy.array of shape (4,).
 
@@ -8,13 +9,15 @@ The fourth value is the sphere's radius.
 """
 from __future__ import absolute_import, division, print_function
 import numpy as np
-from .utils import all_parameters_as_numpy_arrays, parameters_as_numpy_arrays
+from math3.utils import all_parameters_as_numpy_arrays, parameters_as_numpy_arrays
+
 
 @parameters_as_numpy_arrays('center')
 def create(center=None, radius=1.0, dtype=None):
     if center is None:
-        center = [0.,0.,0.]
+        center = [0., 0., 0.]
     return np.array([center[0], center[1], center[2], radius], dtype=dtype)
+
 
 @parameters_as_numpy_arrays('points')
 def create_from_points(points, dtype=None):
@@ -28,9 +31,9 @@ def create_from_points(points, dtype=None):
     # calculate the lengths of all the points
     # use squared length to save processing
     lengths = np.apply_along_axis(
-        np.sum,
-        points.ndim - 1,
-        points**2
+            np.sum,
+            points.ndim - 1,
+            points ** 2
     )
 
     # find the maximum value
@@ -39,6 +42,7 @@ def create_from_points(points, dtype=None):
     # square root this, this is the radius
     radius = np.sqrt(maximum)
     return np.array([0.0, 0.0, 0.0, radius], dtype=dtype)
+
 
 @all_parameters_as_numpy_arrays
 def position(sphere):
@@ -49,6 +53,7 @@ def position(sphere):
     :return: The centre of the sphere.
     """
     return sphere[:3].copy()
+
 
 @all_parameters_as_numpy_arrays
 def radius(sphere):

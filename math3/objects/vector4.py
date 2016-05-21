@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-"""Represents a 4 dimensional Vector.
+"""
+Represents a 4 dimensional Vector.
 
 The Vector4 class provides a number of convenient functions and
 conversions.
 ::
 
     import numpy as np
-    from math3 import Quaternion, Matrix33, Matrix44, Vector4
+    from math3 import Quaternion, Matrix3, Matrix4, Vector4
 
     v = Vector4()
     v = Vector4([1.,2.,3.])
@@ -21,7 +22,7 @@ conversions.
     v = Vector4([1.,2.,3.,4.]) + Vector4([4.,5.,6.,7.])
 
     # rotate a vector by a Matrix
-    v = Matrix44.identity() * Vector4([1.,2.,3.,4.])
+    v = Matrix4.identity() * Vector4([1.,2.,3.,4.])
 
     # rotate a vector by a Quaternion
     v = Quaternion() * Vector4([1.,2.,3.,4.])
@@ -46,8 +47,9 @@ from __future__ import absolute_import
 from numbers import Number
 import numpy as np
 from multipledispatch import dispatch
-from .base import BaseObject, BaseVector4, BaseMatrix44, NpProxy
+from .base import BaseObject, BaseVector4, BaseMatrix4, NpProxy
 from .. import vector4
+
 
 # TODO: add < <= > >= == != operators
 
@@ -64,19 +66,19 @@ class Vector4(BaseVector4):
     #: The W value of this Vector.
     w = NpProxy(3)
     #: The X,Y values of this Vector as a numpy.ndarray.
-    xy = NpProxy([0,1])
+    xy = NpProxy([0, 1])
     #: The X,Y,Z values of this Vector as a numpy.ndarray.
-    xyz = NpProxy([0,1,2])
+    xyz = NpProxy([0, 1, 2])
     #: The X,Y,Z,W values of this Vector as a numpy.ndarray.
-    xyzw = NpProxy(slice(0,4))
+    xyzw = NpProxy(slice(0, 4))
     #: The X,Z values of this Vector as a numpy.ndarray.
-    xz = NpProxy([0,2])
+    xz = NpProxy([0, 2])
     #: The X,W values of this Vector as a numpy.ndarray.
-    xw = NpProxy([0,3])
+    xw = NpProxy([0, 3])
     #: The X,Y,W values of this Vector as a numpy.ndarray.
-    xyw = NpProxy([0,1,3])
+    xyw = NpProxy([0, 1, 3])
     #: The X,Z,W values of this Vector as a numpy.ndarray.
-    xzw = NpProxy([0,2,3])
+    xzw = NpProxy([0, 2, 3])
 
     ########################
     # Creation
@@ -95,7 +97,7 @@ class Vector4(BaseVector4):
                 obj = np.array(value, dtype=dtype)
 
             # matrix44
-            if obj.shape in ((4,4,)) or isinstance(obj, BaseMatrix44):
+            if obj.shape in ((4, 4,)) or isinstance(obj, BaseMatrix4):
                 obj = vector4.create_from_matrix44_translation(obj, dtype=dtype)
         else:
             obj = np.zeros(cls._shape, dtype=dtype)
@@ -162,8 +164,8 @@ class Vector4(BaseVector4):
     def __div__(self, other):
         return Vector4(super(Vector4, self).__div__(other))
 
-    #@dispatch(BaseVector)
-    #def __xor__(self, other):
+    # @dispatch(BaseVector)
+    # def __xor__(self, other):
     #    return self.cross(Vector4(other))
 
     @dispatch((BaseVector4, np.ndarray, list))
@@ -214,5 +216,6 @@ class Vector4(BaseVector4):
         """
         return (Vector3(self[:3]), self[3])
 
-from .matrix44 import Matrix44
+
+from .matrix4 import Matrix4
 from .vector3 import Vector3

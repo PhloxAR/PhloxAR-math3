@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""3x3 Matrix which supports rotation, translation, scale and skew.
+"""
+3x3 Matrix which supports rotation, translation, scale and skew.
 
 Matrices are laid out in row-major format and can be loaded directly
 into OpenGL.
@@ -8,8 +9,8 @@ numpy.array.T method.
 """
 from __future__ import absolute_import, division, print_function
 import numpy as np
-from . import vector, quaternion, euler
-from .utils import all_parameters_as_numpy_arrays, parameters_as_numpy_arrays
+from math3 import vector, quaternion, euler
+from math3.utils import all_parameters_as_numpy_arrays, parameters_as_numpy_arrays
 
 
 def create_identity(dtype=None):

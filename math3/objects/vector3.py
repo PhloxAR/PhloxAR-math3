@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-"""Represents a 3 dimensional Vector.
+"""
+Represents a 3 dimensional Vector.
 
 The Vector3 class provides a number of convenient functions and
 conversions.
 ::
 
     import numpy as np
-    from math3 import Quaternion, Matrix33, Matrix44, Vector3
+    from math3 import Quaternion, Matrix3, Matrix4, Vector3
 
     v = Vector3()
     v = Vector3([1.,2.,3.])
@@ -18,8 +19,8 @@ conversions.
     v = Vector3([1.,2.,3.]) + Vector3([4.,5.,6.])
 
     # rotate a vector by a Matrix
-    v = Matrix33.identity() * Vector3([1.,2.,3.])
-    v = Matrix44.identity() * Vector3([1.,2.,3.])
+    v = Matrix3.identity() * Vector3([1.,2.,3.])
+    v = Matrix4.identity() * Vector3([1.,2.,3.])
 
     # rotate a vector by a Quaternion
     v = Quaternion() * Vector3([1.,2.,3.])
@@ -43,7 +44,7 @@ from __future__ import absolute_import, division
 from numbers import Number
 import numpy as np
 from multipledispatch import dispatch
-from .base import BaseObject, BaseVector3, BaseMatrix44, NpProxy
+from .base import BaseObject, BaseVector3, BaseMatrix4, NpProxy
 from .. import vector3
 
 # TODO: add < <= > >= == != operators
@@ -83,7 +84,7 @@ class Vector3(BaseVector3):
                 obj = np.array(value, dtype=dtype)
 
             # matrix44
-            if obj.shape in ((4,4,)) or isinstance(obj, BaseMatrix44):
+            if obj.shape in ((4,4,)) or isinstance(obj, BaseMatrix4):
                 obj = vector3.create_from_matrix44_translation(obj, dtype=dtype)
         else:
             obj = np.zeros(cls._shape, dtype=dtype)

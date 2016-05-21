@@ -1,24 +1,25 @@
 # -*- coding: utf-8 -*-
-"""Represents a Quaternion rotation.
+"""
+Represents a Quaternion rotation.
 
 The Quaternion class provides a number of convenient functions and
 conversions.
 ::
 
     import numpy as np
-    from math3 import Quaternion, Matrix33, Matrix44, Vector3, Vector4
+    from math3 import Quaternion, Matrix3, Matrix4, Vector3, Vector4
 
     q = Quaternion()
 
     # explicit creation
     q = Quaternion.from_x_rotation(np.pi / 2.0)
-    q = Quaternion.from_matrix(Matrix33.identity())
-    q = Quaternion.from_matrix(Matrix44.identity())
+    q = Quaternion.from_matrix(Matrix3.identity())
+    q = Quaternion.from_matrix(Matrix4.identity())
 
     # inferred conversions
     q = Quaternion(Quaternion())
-    q = Quaternion(Matrix33.identity())
-    q = Quaternion(Matrix44.identity())
+    q = Quaternion(Matrix3.identity())
+    q = Quaternion(Matrix4.identity())
 
     # apply one quaternion to another
     q1 = Quaternion.from_y_rotation(np.pi / 2.0)
@@ -33,8 +34,8 @@ conversions.
     q4 = Quaternion(m44)
 
     # rotate a quaternion by a matrix
-    q = Quaternion() * Matrix33.identity()
-    q = Quaternion() * Matrix44.identity()
+    q = Quaternion() * Matrix3.identity()
+    q = Quaternion() * Matrix4.identity()
 
     # apply quaternion to a vector
     v3 = Quaternion() * Vector3()
@@ -57,6 +58,7 @@ from multipledispatch import dispatch
 from .base import BaseObject, BaseQuaternion, BaseMatrix, BaseVector, NpProxy
 from .. import quaternion
 
+
 class Quaternion(BaseQuaternion):
     _module = quaternion
     _shape = (4,)
@@ -70,19 +72,19 @@ class Quaternion(BaseQuaternion):
     #: The W value of this Quaternion.
     w = NpProxy(3)
     #: The X,Y value of this Quaternion as a numpy.ndarray.
-    xy = NpProxy([0,1])
+    xy = NpProxy([0, 1])
     #: The X,Y,Z value of this Quaternion as a numpy.ndarray.
-    xyz = NpProxy([0,1,2])
+    xyz = NpProxy([0, 1, 2])
     #: The X,Y,Z,W value of this Quaternion as a numpy.ndarray.
-    xyzw = NpProxy([0,1,2,3])
+    xyzw = NpProxy([0, 1, 2, 3])
     #: The X,Z value of this Quaternion as a numpy.ndarray.
-    xz = NpProxy([0,2])
+    xz = NpProxy([0, 2])
     #: The X,Z,W value of this Quaternion as a numpy.ndarray.
-    xzw = NpProxy([0,2,3])
+    xzw = NpProxy([0, 2, 3])
     #: The X,Y,W value of this Quaternion as a numpy.ndarray.
-    xyw = NpProxy([0,1,3])
+    xyw = NpProxy([0, 1, 3])
     #: The X,W value of this Quaternion as a numpy.ndarray.
-    xw = NpProxy([0,3])
+    xw = NpProxy([0, 3])
 
     ########################
     # Creation
@@ -112,7 +114,7 @@ class Quaternion(BaseQuaternion):
 
     @classmethod
     def from_matrix(cls, matrix, dtype=None):
-        """Creates a Quaternion from the specified Matrix (Matrix33 or Matrix44).
+        """Creates a Quaternion from the specified Matrix (Matrix3 or Matrix4).
         """
         return cls(quaternion.create_from_matrix(matrix, dtype))
 
@@ -135,7 +137,8 @@ class Quaternion(BaseQuaternion):
                 obj = np.array(value, dtype=dtype)
 
             # matrix33, matrix44
-            if obj.shape in ((4,4,), (3,3,)) or isinstance(obj, (Matrix33, Matrix44)):
+            if obj.shape in ((4, 4,), (3, 3,)) or isinstance(obj, (
+                    Matrix3, Matrix4)):
                 obj = quaternion.create_from_matrix(obj, dtype=dtype)
         else:
             obj = quaternion.create(dtype=dtype)
@@ -269,16 +272,17 @@ class Quaternion(BaseQuaternion):
 
     @property
     def matrix44(self):
-        """Returns a Matrix44 representation of this Quaternion.
+        """Returns a Matrix4 representation of this Quaternion.
         """
-        return Matrix44.from_quaternion(self)
+        return Matrix4.from_quaternion(self)
 
     @property
     def matrix33(self):
-        """Returns a Matrix33 representation of this Quaternion.
+        """Returns a Matrix3 representation of this Quaternion.
         """
-        return Matrix33.from_quaternion(self)
+        return Matrix3.from_quaternion(self)
+
 
 from .vector3 import Vector3
-from .matrix33 import Matrix33
-from .matrix44 import Matrix44
+from .matrix3 import Matrix3
+from .matrix4 import Matrix4

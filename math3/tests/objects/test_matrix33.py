@@ -4,8 +4,8 @@ try:
 except:
     import unittest
 import numpy as np
-from math3.objects.matrix33 import Matrix33
-from math3.objects.matrix44 import Matrix44
+from math3.objects.matrix3 import Matrix3
+from math3.objects.matrix4 import Matrix4
 from math3.objects.quaternion import Quaternion
 from math3.objects.vector3 import Vector3
 from math3.objects.vector4 import Vector4
@@ -20,31 +20,31 @@ class test_object_matrix33(unittest.TestCase):
 
     def test_imports(self):
         import math3
-        math3.Matrix33()
+        math3.Matrix3()
         math3.matrix33.Matrix33()
-        math3.objects.matrix33.Matrix33()
+        math3.objects.matrix3.Matrix3()
 
-        from math3 import Matrix33
-        from math3.objects import Matrix33
-        from math3.objects.matrix33 import Matrix33
+        from math3 import Matrix3
+        from math3.objects import Matrix3
+        from math3.objects.matrix3 import Matrix3
 
     def test_create(self):
-        m = Matrix33()
+        m = Matrix3()
         self.assertTrue(np.array_equal(m, np.zeros(self._shape)))
         self.assertEqual(m.shape, self._shape)
 
-        m = Matrix33(np.arange(self._size))
+        m = Matrix3(np.arange(self._size))
         self.assertEqual(m.shape, self._shape)
 
-        m = Matrix33([[1,2,3],[4,5,6],[7,8,9]])
+        m = Matrix3([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
         self.assertEqual(m.shape, self._shape)
 
-        m = Matrix33(Matrix33())
+        m = Matrix3(Matrix3())
         self.assertTrue(np.array_equal(m, np.zeros(self._shape)))
         self.assertEqual(m.shape, self._shape)
 
     def test_identity(self):
-        m = Matrix33.identity()
+        m = Matrix3.identity()
         self.assertTrue(np.array_equal(m, np.eye(3)))
 
     @unittest.skip('Not implemented')
@@ -64,68 +64,68 @@ class test_object_matrix33(unittest.TestCase):
         pass
 
     def test_create_from_matrix44(self):
-        m1 = Matrix44.identity()
-        m = Matrix33.from_matrix44(m1)
+        m1 = Matrix4.identity()
+        m = Matrix3.from_matrix44(m1)
         self.assertTrue(np.array_equal(m, np.eye(3)))
 
-        m = Matrix33(m1)
+        m = Matrix3(m1)
         self.assertTrue(np.array_equal(m, np.eye(3)))
 
     def test_create_from_scale(self):
         v = Vector3([1,2,3])
-        m = Matrix33.from_scale(v)
+        m = Matrix3.from_scale(v)
         self.assertTrue(np.array_equal(m, np.diag([1,2,3])))
 
     def test_create_from_eulers(self):
         e = Vector3([1,2,3])
-        m = Matrix33.from_eulers(e)
+        m = Matrix3.from_eulers(e)
         self.assertTrue(np.array_equal(m, matrix33.create_from_eulers([1,2,3])))
 
     def test_create_from_quaternion(self):
         q = Quaternion()
-        m = Matrix33.from_quaternion(q)
+        m = Matrix3.from_quaternion(q)
         self.assertTrue(np.array_equal(m, np.eye(3)))
         self.assertTrue(np.array_equal(m.quaternion, q))
 
-        m = Matrix33(q)
+        m = Matrix3(q)
         self.assertTrue(np.array_equal(m, np.eye(3)))
 
     def test_create_from_inverse_quaternion(self):
         q = Quaternion.from_x_rotation(0.5)
-        m = Matrix33.from_inverse_of_quaternion(q)
+        m = Matrix3.from_inverse_of_quaternion(q)
         expected = matrix33.create_from_quaternion(quaternion.inverse(quaternion.create_from_x_rotation(0.5)))
         np.testing.assert_almost_equal(np.array(m), expected, decimal=5)
         #self.assertTrue(np.array_equal(m, expected))
 
     def test_multiply(self):
-        m1 = Matrix33(np.arange(self._size))
-        m2 = Matrix33(np.arange(self._size)[::-1])
+        m1 = Matrix3(np.arange(self._size))
+        m2 = Matrix3(np.arange(self._size)[::-1])
         m = m1 * m2
         self.assertTrue(np.array_equal(m, matrix33.multiply(m1, m2)))
 
-        m1 = Matrix33(np.arange(self._size))
-        m2 = Matrix44(np.arange(16))
+        m1 = Matrix3(np.arange(self._size))
+        m2 = Matrix4(np.arange(16))
         m = m1 * m2
         self.assertTrue(np.array_equal(m, matrix33.multiply(m1, matrix33.create_from_matrix44(m2))))
 
     def test_inverse(self):
-        m1 = Matrix33.identity() * Matrix33.from_x_rotation(0.5)
+        m1 = Matrix3.identity() * Matrix3.from_x_rotation(0.5)
         m = m1.inverse
         self.assertTrue(np.array_equal(m, matrix33.inverse(m1)))
 
     def test_matrix33(self):
-        m1 = Matrix33.identity() * Matrix33.from_x_rotation(0.5)
+        m1 = Matrix3.identity() * Matrix3.from_x_rotation(0.5)
         m = m1.matrix33
         self.assertTrue(m1 is m)
 
     def test_matrix44(self):
-        m1 = Matrix33.identity() * Matrix33.from_x_rotation(0.5)
+        m1 = Matrix3.identity() * Matrix3.from_x_rotation(0.5)
         m = m1.matrix44
         self.assertTrue(np.array_equal(m, matrix44.create_from_matrix33(m1)))
 
     def test_operators_matrix33(self):
-        m1 = Matrix33.identity()
-        m2 = Matrix33.from_x_rotation(0.5)
+        m1 = Matrix3.identity()
+        m2 = Matrix3.from_x_rotation(0.5)
 
         # add
         self.assertTrue(np.array_equal(m1 + m2, matrix33.create_identity() + matrix33.create_from_x_rotation(0.5)))
@@ -143,8 +143,8 @@ class test_object_matrix33(unittest.TestCase):
         self.assertTrue(np.array_equal(~m2, matrix33.inverse(matrix33.create_from_x_rotation(0.5))))
 
     def test_operators_matrix44(self):
-        m1 = Matrix33.identity()
-        m2 = Matrix44.from_x_rotation(0.5)
+        m1 = Matrix3.identity()
+        m2 = Matrix4.from_x_rotation(0.5)
 
         # add
         self.assertTrue(np.array_equal(m1 + m2, matrix33.create_identity() + matrix33.create_from_x_rotation(0.5)))
@@ -159,7 +159,7 @@ class test_object_matrix33(unittest.TestCase):
         self.assertRaises(ValueError, lambda: m1 / m2)
 
     def test_operators_quaternion(self):
-        m = Matrix33.identity()
+        m = Matrix3.identity()
         q = Quaternion.from_x_rotation(0.7)
         
         # add
@@ -175,7 +175,7 @@ class test_object_matrix33(unittest.TestCase):
         self.assertRaises(ValueError, lambda: m / q)
 
     def test_operators_vector3(self):
-        m = Matrix33.identity()
+        m = Matrix3.identity()
         v = Vector3([1,1,1])
         
         # add
@@ -191,7 +191,7 @@ class test_object_matrix33(unittest.TestCase):
         self.assertRaises(ValueError, lambda: m / v)
 
     def test_operators_vector4(self):
-        m = Matrix33.identity()
+        m = Matrix3.identity()
         v = Vector4([1,1,1,1])
         
         # add
@@ -207,7 +207,7 @@ class test_object_matrix33(unittest.TestCase):
         self.assertRaises(ValueError, lambda: m / v)
 
     def test_operators_number(self):
-        m = Matrix33.identity()
+        m = Matrix3.identity()
         fv = np.empty((1,), dtype=[('i', np.int16, 1),('f', np.float32, 1)])
         fv[0] = (2, 2.0)
         
@@ -240,7 +240,7 @@ class test_object_matrix33(unittest.TestCase):
         self.assertTrue(np.array_equal(m / fv[0]['i'], matrix33.create_identity()[:] / 2.0))
 
     def test_accessors(self):
-        m = Matrix33(np.arange(self._size))
+        m = Matrix3(np.arange(self._size))
         self.assertTrue(np.array_equal(m.m1,[0,1,2]))
         self.assertTrue(np.array_equal(m.m2,[3,4,5]))
         self.assertTrue(np.array_equal(m.m3,[6,7,8]))

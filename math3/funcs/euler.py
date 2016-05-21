@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Provide functions for the creation and manipulation of Euler angles.
+"""
+Provide functions for the creation and manipulation of Euler angles.
 
 Eulers represent 3 rotations: Pitch, Roll and Yaw.
 

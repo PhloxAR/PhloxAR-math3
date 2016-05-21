@@ -3,21 +3,21 @@ try:
 except:
     import unittest
 import numpy as np
-from math3 import aabb
+
+from math3.funcs import aabb
 
 
 class test_aabb(unittest.TestCase):
     def test_import(self):
         import math3
-        math3.aabb
-        from math3 import aabb
+        math3.funcs.aabbfunc
 
     def test_create_zeros(self):
         result = aabb.create_zeros()
         self.assertTrue(np.array_equal(result, [[0,0,0],[0,0,0]]))
 
     def test_create_from_bounds(self):
-        result = aabb.create_from_bounds([-1,-1,-1],[1,1,1])
+        result = aabb.create_from_bounds([-1, -1, -1], [1, 1, 1])
         self.assertTrue(np.array_equal(result, [[-1,-1,-1],[1,1,1]]))
 
     def test_create_from_points(self):
@@ -122,24 +122,24 @@ class test_aabb(unittest.TestCase):
         self.assertTrue(np.array_equal(result, expected))
 
     def test_minimum(self):
-        a = aabb.create_from_bounds([-1,-1,-1],[1,1,1])
+        a = aabb.create_from_bounds([-1, -1, -1], [1, 1, 1])
         result = aabb.minimum(a)
         self.assertTrue(np.array_equal(result, [-1,-1,-1]))
 
     def test_maximum(self):
-        a = aabb.create_from_bounds([-1,-1,-1],[1,1,1])
+        a = aabb.create_from_bounds([-1, -1, -1], [1, 1, 1])
         result = aabb.maximum(a)
         self.assertTrue(np.array_equal(result, [1,1,1]))
 
     def test_clamp_points_single(self):
-        a = aabb.create_from_bounds([-1,-1,-1],[1,1,1])
+        a = aabb.create_from_bounds([-1, -1, -1], [1, 1, 1])
         points = np.array([2,1,1])
         result = aabb.clamp_points(a, points)
         expected = np.array([1,1,1])
         self.assertTrue(np.array_equal(result, expected))
 
     def test_clamp_points_list(self):
-        a = aabb.create_from_bounds([-1,-1,-1],[1,1,1])
+        a = aabb.create_from_bounds([-1, -1, -1], [1, 1, 1])
         points = np.array([
             [1,1,1],
             [2,1,1],

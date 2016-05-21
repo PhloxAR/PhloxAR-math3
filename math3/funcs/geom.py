@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-"""Geometry functions.
+"""
+Geometry functions.
 """
 from __future__ import absolute_import, division, print_function
 import numpy as np
 
 
-def create_quad(scale=(1.0,1.0), st=False, rgba=False, dtype='float32', type='triangles'):
+def create_quad(scale=(1.0, 1.0), st=False, rgba=False, dtype='float32',
+                type='triangles'):
     """Returns a Quad reading for rendering.
 
     Output is a tuple of numpy arrays.
@@ -122,13 +124,13 @@ def create_quad(scale=(1.0,1.0), st=False, rgba=False, dtype='float32', type='tr
 
     vertices = np.array([
         # top right
-        ( width, height, 0.0,),
+        (width, height, 0.0,),
         # top left
         (-width, height, 0.0,),
         # bottom left
-        (-width,-height, 0.0,),
+        (-width, -height, 0.0,),
         # bottom right
-        ( width,-height, 0.0,),
+        (width, -height, 0.0,),
     ], dtype=dtype)
 
     st_values = None
@@ -149,11 +151,11 @@ def create_quad(scale=(1.0,1.0), st=False, rgba=False, dtype='float32', type='tr
             st_values *= st
         elif isinstance(st, (list, tuple, np.ndarray)):
             st = np.array(st, dtype=dtype)
-            if st.shape == (2,2,):
+            if st.shape == (2, 2,):
                 # min / max
                 st_values *= st[1] - st[0]
                 st_values += st[0]
-            elif st.shape == (4,2,):
+            elif st.shape == (4, 2,):
                 # st values specified manually
                 st_values[:] = st
             else:
@@ -166,23 +168,24 @@ def create_quad(scale=(1.0,1.0), st=False, rgba=False, dtype='float32', type='tr
 
     if rgba:
         # default rgba values
-        rgba_values = np.tile(np.array([1.0, 1.0, 1.0, 1.0], dtype=dtype), (4,1,))
+        rgba_values = np.tile(np.array([1.0, 1.0, 1.0, 1.0], dtype=dtype),
+                              (4, 1,))
 
         if isinstance(rgba, bool):
             pass
         elif isinstance(rgba, (int, float)):
             # int / float expands to RGBA with all values == value
-            rgba_values *= rgba 
+            rgba_values *= rgba
         elif isinstance(rgba, (list, tuple, np.ndarray)):
             rgba = np.array(rgba, dtype=dtype)
 
             if rgba.shape == (3,):
-                rgba_values = np.tile(rgba, (4,1,))
+                rgba_values = np.tile(rgba, (4, 1,))
             elif rgba.shape == (4,):
                 rgba_values[:] = rgba
-            elif rgba.shape == (4,3,):
+            elif rgba.shape == (4, 3,):
                 rgba_values = rgba
-            elif rgba.shape == (4,4,):
+            elif rgba.shape == (4, 4,):
                 rgba_values = rgba
             else:
                 raise ValueError('Invalid shape for rgba')
@@ -192,11 +195,11 @@ def create_quad(scale=(1.0,1.0), st=False, rgba=False, dtype='float32', type='tr
         shape[-1] += rgba_values.shape[-1]
 
     data = np.empty(shape, dtype=dtype)
-    data[:,:3] = vertices
+    data[:, :3] = vertices
     if st_values is not None:
-        data[:,3:5] = st_values
+        data[:, 3:5] = st_values
     if rgba_values is not None:
-        data[:,rgba_offset:] = rgba_values
+        data[:, rgba_offset:] = rgba_values
 
     if type == 'triangles':
         # counter clockwise
@@ -218,7 +221,9 @@ def create_quad(scale=(1.0,1.0), st=False, rgba=False, dtype='float32', type='tr
 
     return data, indices
 
-def create_cube(scale=(1.0,1.0,1.0), st=False, rgba=False, dtype='float32', type='triangles'):
+
+def create_cube(scale=(1.0, 1.0, 1.0), st=False, rgba=False, dtype='float32',
+                type='triangles'):
     """Returns a Cube reading for rendering.
 
     Output is a tuple of numpy arrays.
@@ -369,63 +374,63 @@ def create_cube(scale=(1.0,1.0,1.0), st=False, rgba=False, dtype='float32', type
     vertices = np.array([
         # front
         # top right
-        ( width, height, depth,),
+        (width, height, depth,),
         # top left
         (-width, height, depth,),
         # bottom left
-        (-width,-height, depth,),
+        (-width, -height, depth,),
         # bottom right
-        ( width,-height, depth,),
+        (width, -height, depth,),
 
         # right
         # top right
-        ( width, height,-depth),
+        (width, height, -depth),
         # top left
-        ( width, height, depth),
+        (width, height, depth),
         # bottom left
-        ( width,-height, depth),
+        (width, -height, depth),
         # bottom right
-        ( width,-height,-depth),
+        (width, -height, -depth),
 
         # back
         # top right
-        (-width, height,-depth),
+        (-width, height, -depth),
         # top left
-        ( width, height,-depth),
+        (width, height, -depth),
         # bottom left
-        ( width,-height,-depth),
+        (width, -height, -depth),
         # bottom right
-        (-width,-height,-depth),
+        (-width, -height, -depth),
 
         # left
         # top right
         (-width, height, depth),
         # top left
-        (-width, height,-depth),
+        (-width, height, -depth),
         # bottom left
-        (-width,-height,-depth),
+        (-width, -height, -depth),
         # bottom right
-        (-width,-height, depth),
+        (-width, -height, depth),
 
         # top
         # top right
-        ( width, height,-depth),
+        (width, height, -depth),
         # top left
-        (-width, height,-depth),
+        (-width, height, -depth),
         # bottom left
         (-width, height, depth),
         # bottom right
-        ( width, height, depth),
+        (width, height, depth),
 
         # bottom
         # top right
-        ( width,-height, depth),
+        (width, -height, depth),
         # top left
-        (-width,-height, depth),
+        (-width, -height, depth),
         # bottom left
-        (-width,-height,-depth),
+        (-width, -height, -depth),
         # bottom right
-        ( width,-height,-depth),
+        (width, -height, -depth),
     ], dtype=dtype)
 
     st_values = None
@@ -434,13 +439,13 @@ def create_cube(scale=(1.0,1.0,1.0), st=False, rgba=False, dtype='float32', type
     if st:
         # default st values
         st_values = np.tile(
-            np.array([
-                (1.0, 1.0,),
-                (0.0, 1.0,),
-                (0.0, 0.0,),
-                (1.0, 0.0,),
-            ], dtype=dtype),
-            (6,1,)
+                np.array([
+                    (1.0, 1.0,),
+                    (0.0, 1.0,),
+                    (0.0, 0.0,),
+                    (1.0, 0.0,),
+                ], dtype=dtype),
+                (6, 1,)
         )
 
         if isinstance(st, bool):
@@ -449,14 +454,14 @@ def create_cube(scale=(1.0,1.0,1.0), st=False, rgba=False, dtype='float32', type
             st_values *= st
         elif isinstance(st, (list, tuple, np.ndarray)):
             st = np.array(st, dtype=dtype)
-            if st.shape == (2,2,):
+            if st.shape == (2, 2,):
                 # min / max
                 st_values *= st[1] - st[0]
                 st_values += st[0]
-            elif st.shape == (4,2,):
+            elif st.shape == (4, 2,):
                 # per face st values specified manually
-                st_values[:] = np.tile(st, (6,1,))
-            elif st.shape == (6,2,):
+                st_values[:] = np.tile(st, (6, 1,))
+            elif st.shape == (6, 2,):
                 # st values specified manually
                 st_values[:] = st
             else:
@@ -469,31 +474,32 @@ def create_cube(scale=(1.0,1.0,1.0), st=False, rgba=False, dtype='float32', type
 
     if rgba:
         # default rgba values
-        rgba_values = np.tile(np.array([1.0, 1.0, 1.0, 1.0], dtype=dtype), (24,1,))
+        rgba_values = np.tile(np.array([1.0, 1.0, 1.0, 1.0], dtype=dtype),
+                              (24, 1,))
 
         if isinstance(rgba, bool):
             pass
         elif isinstance(rgba, (int, float)):
             # int / float expands to RGBA with all values == value
-            rgba_values *= rgba 
+            rgba_values *= rgba
         elif isinstance(rgba, (list, tuple, np.ndarray)):
             rgba = np.array(rgba, dtype=dtype)
 
             if rgba.shape == (3,):
-                rgba_values = np.tile(rgba, (24,1,))
+                rgba_values = np.tile(rgba, (24, 1,))
             elif rgba.shape == (4,):
-                rgba_values[:] = np.tile(rgba, (24,1,))
-            elif rgba.shape == (4,3,):
-                rgba_values = np.tile(rgba, (6,1,))
-            elif rgba.shape == (4,4,):
-                rgba_values = np.tile(rgba, (6,1,))
-            elif rgba.shape == (6,3,):
+                rgba_values[:] = np.tile(rgba, (24, 1,))
+            elif rgba.shape == (4, 3,):
+                rgba_values = np.tile(rgba, (6, 1,))
+            elif rgba.shape == (4, 4,):
+                rgba_values = np.tile(rgba, (6, 1,))
+            elif rgba.shape == (6, 3,):
                 rgba_values = np.repeat(rgba, 4, axis=0)
-            elif rgba.shape == (6,4,):
+            elif rgba.shape == (6, 4,):
                 rgba_values = np.repeat(rgba, 4, axis=0)
-            elif rgba.shape == (24,3,):
+            elif rgba.shape == (24, 3,):
                 rgba_values = rgba
-            elif rgba.shape == (24,4,):
+            elif rgba.shape == (24, 4,):
                 rgba_values = rgba
             else:
                 raise ValueError('Invalid shape for rgba')
@@ -503,17 +509,17 @@ def create_cube(scale=(1.0,1.0,1.0), st=False, rgba=False, dtype='float32', type
         shape[-1] += rgba_values.shape[-1]
 
     data = np.empty(shape, dtype=dtype)
-    data[:,:3] = vertices
+    data[:, :3] = vertices
     if st_values is not None:
-        data[:,3:5] = st_values
+        data[:, 3:5] = st_values
     if rgba_values is not None:
-        data[:,rgba_offset:] = rgba_values
+        data[:, rgba_offset:] = rgba_values
 
     if type == 'triangles':
         # counter clockwise
         # top right -> top left -> bottom left
         # top right -> bottom left -> bottom right
-        indices = np.tile(np.array([0, 1, 2, 0, 2, 3], dtype='int'), (6,1))
+        indices = np.tile(np.array([0, 1, 2, 0, 2, 3], dtype='int'), (6, 1))
         for face in range(6):
             indices[face] += (face * 4)
         indices.shape = (-1,)

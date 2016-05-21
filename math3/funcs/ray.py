@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Provide functions for the creation and manipulation of Rays.
+"""
+Provide functions for the creation and manipulation of Rays.
 
 A ray begins as a single point and extends
 infinitely in a direction.
@@ -16,8 +17,9 @@ function to function.
 """
 from __future__ import absolute_import, division, print_function
 import numpy as np
-from . import vector
-from .utils import all_parameters_as_numpy_arrays, parameters_as_numpy_arrays
+from math3 import vector
+from math3.utils import all_parameters_as_numpy_arrays, \
+    parameters_as_numpy_arrays
 
 
 class index:
@@ -32,12 +34,13 @@ class index:
 def create(start, direction, dtype=None):
     dtype = dtype or start.dtype
     return np.array(
-        [
-            start,
-            vector.normalise(direction)
-        ],
-        dtype=dtype
+            [
+                start,
+                vector.normalise(direction)
+            ],
+            dtype=dtype
     )
+
 
 @parameters_as_numpy_arrays('line')
 def create_from_line(line, dtype=None):
@@ -46,12 +49,13 @@ def create_from_line(line, dtype=None):
     dtype = dtype or line.dtype
     # direction = vend - vstart
     return np.array(
-        [
-            line[0],
-            vector.normalise(line[1] - line[0])
-        ],
-        dtype=dtype
+            [
+                line[0],
+                vector.normalise(line[1] - line[0])
+            ],
+            dtype=dtype
     )
+
 
 @all_parameters_as_numpy_arrays
 def invert(r):
@@ -59,11 +63,12 @@ def invert(r):
     r2[1] *= -1
     return r2
 
+
 @all_parameters_as_numpy_arrays
 def position(ray):
     return ray[0].copy()
 
+
 @all_parameters_as_numpy_arrays
 def direction(ray):
     return ray[1].copy()
-

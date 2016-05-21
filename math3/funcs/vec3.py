@@ -1,37 +1,44 @@
 # -*- coding: utf-8 -*-
-"""Provides functions for creating and manipulating 3D vectors.
 """
-from __future__ import absolute_import, division, print_function, unicode_literals
-import numpy as np
+Provides functions for creating and manipulating 3D vectors.
+"""
+from __future__ import division, print_function
+from __future__ import absolute_import, unicode_literals
 
 # import common vector operations
-from .vector import *
+from .vec import *
 
 
 def create(x=0., y=0., z=0., dtype=None):
     if isinstance(x, (list, np.ndarray)):
         raise ValueError('Function requires non-list arguments')
-    return np.array([x,y,z], dtype=dtype)
+    return np.array([x, y, z], dtype=dtype)
+
 
 def create_unit_length_x(dtype=None):
     return np.array([1.0, 0.0, 0.0], dtype=dtype)
 
+
 def create_unit_length_y(dtype=None):
     return np.array([0.0, 1.0, 0.0], dtype=dtype)
 
+
 def create_unit_length_z(dtype=None):
     return np.array([0.0, 0.0, 1.0], dtype=dtype)
+
 
 @parameters_as_numpy_arrays('vector')
 def create_from_vector4(vector, dtype=None):
     """Returns a vector3 and the W component as a tuple.
     """
     dtype = dtype or vector.dtype
-    return (np.array([vector[0], vector[1], vector[2]], dtype=dtype), vector[3])
+    return np.array([vector[0], vector[1], vector[2]], dtype=dtype), vector[3]
+
 
 @parameters_as_numpy_arrays('mat')
 def create_from_matrix44_translation(mat, dtype=None):
     return np.array(mat[3, :3], dtype=dtype)
+
 
 def cross(v1, v2):
     """Calculates the cross-product of two vectors.
@@ -43,6 +50,7 @@ def cross(v1, v2):
     :rtype: A np.array with shape v1.shape.
     """
     return np.cross(v1, v2)
+
 
 def generate_normals(v1, v2, v3, normalise_result=True):
     """Generates a normal vector for 3 vertices.

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""4x4 Matrix which supports rotation, translation, scale and skew.
+"""
+4x4 Matrix which supports rotation, translation, scale and skew.
 
 Matrices are laid out in row-major format and can be loaded directly
 into OpenGL.
@@ -8,8 +9,9 @@ numpy.array.T method.
 """
 from __future__ import absolute_import, division, print_function
 import numpy as np
-from . import matrix33
-from .utils import all_parameters_as_numpy_arrays, parameters_as_numpy_arrays
+from math3 import matrix33
+from math3.utils import all_parameters_as_numpy_arrays, \
+    parameters_as_numpy_arrays
 
 
 def create_identity(dtype=None):
@@ -20,6 +22,7 @@ def create_identity(dtype=None):
     :return: A matrix representing an identity matrix with shape (4,4).
     """
     return np.identity(4, dtype=dtype)
+
 
 def create_from_matrix33(mat, dtype=None):
     """Creates a Matrix44 from a Matrix33.
@@ -33,6 +36,7 @@ def create_from_matrix33(mat, dtype=None):
     mat4[0:3, 0:3] = mat
     return mat4
 
+
 def create_matrix33_view(mat):
     """Returns a view into the matrix in Matrix33 format.
 
@@ -43,6 +47,7 @@ def create_matrix33_view(mat):
     :return: A view into the matrix in the format of a matrix33 (shape (3,3)).
     """
     return mat[0:3, 0:3]
+
 
 @parameters_as_numpy_arrays('eulers')
 def create_from_eulers(eulers, dtype=None):
@@ -57,10 +62,11 @@ def create_from_eulers(eulers, dtype=None):
     # set to identity matrix
     # this will populate our extra rows for us
     mat = create_identity(dtype)
-    
+
     # we'll use Matrix33 for our conversion
     mat[0:3, 0:3] = matrix33.create_from_eulers(eulers, dtype)
     return mat
+
 
 @parameters_as_numpy_arrays('axis')
 def create_from_axis_rotation(axis, theta, dtype=None):
@@ -76,10 +82,11 @@ def create_from_axis_rotation(axis, theta, dtype=None):
     # set to identity matrix
     # this will populate our extra rows for us
     mat = create_identity(dtype)
-    
+
     # we'll use Matrix33 for our conversion
     mat[0:3, 0:3] = matrix33.create_from_axis_rotation(axis, theta, dtype)
     return mat
+
 
 @parameters_as_numpy_arrays('quat')
 def create_from_quaternion(quat, dtype=None):
@@ -93,10 +100,11 @@ def create_from_quaternion(quat, dtype=None):
     # set to identity matrix
     # this will populate our extra rows for us
     mat = create_identity(dtype)
-    
+
     # we'll use Matrix33 for our conversion
     mat[0:3, 0:3] = matrix33.create_from_quaternion(quat, dtype)
     return mat
+
 
 @parameters_as_numpy_arrays('quat')
 def create_from_inverse_of_quaternion(quat, dtype=None):
@@ -113,10 +121,11 @@ def create_from_inverse_of_quaternion(quat, dtype=None):
     # set to identity matrix
     # this will populate our extra rows for us
     mat = create_identity(dtype)
-    
+
     # we'll use Matrix33 for our conversion
     mat[0:3, 0:3] = matrix33.create_from_inverse_of_quaternion(quat, dtype)
     return mat
+
 
 @parameters_as_numpy_arrays('vec')
 def create_from_translation(vec, dtype=None):
@@ -131,6 +140,7 @@ def create_from_translation(vec, dtype=None):
     mat = create_identity(dtype)
     mat[3, 0:3] = vec[:3]
     return mat
+
 
 def create_from_scale(scale, dtype=None):
     """Creates an identity matrix with the scale set.
@@ -147,6 +157,7 @@ def create_from_scale(scale, dtype=None):
         m = m.astype(dtype)
     return m
 
+
 def create_from_x_rotation(theta, dtype=None):
     """Creates a matrix with the specified rotation about the X axis.
 
@@ -160,6 +171,7 @@ def create_from_x_rotation(theta, dtype=None):
     mat = create_identity(dtype)
     mat[0:3, 0:3] = matrix33.create_from_x_rotation(theta, dtype)
     return mat
+
 
 def create_from_y_rotation(theta, dtype=None):
     """Creates a matrix with the specified rotation about the Y axis.
@@ -175,6 +187,7 @@ def create_from_y_rotation(theta, dtype=None):
     mat[0:3, 0:3] = matrix33.create_from_y_rotation(theta, dtype)
     return mat
 
+
 def create_from_z_rotation(theta, dtype=None):
     """Creates a matrix with the specified rotation about the Z axis.
 
@@ -188,6 +201,7 @@ def create_from_z_rotation(theta, dtype=None):
     mat = create_identity(dtype)
     mat[0:3, 0:3] = matrix33.create_from_z_rotation(theta, dtype)
     return mat
+
 
 @all_parameters_as_numpy_arrays
 def apply_to_vector(mat, vec):
@@ -217,6 +231,7 @@ def apply_to_vector(mat, vec):
     else:
         raise ValueError("Vector size unsupported")
 
+
 def multiply(m1, m2):
     """Multiply two matricies, m1 . m2.
 
@@ -231,6 +246,7 @@ def multiply(m1, m2):
     :return: A matrix that results from multiplying m1 by m2.
     """
     return np.dot(m1, m2)
+
 
 def create_perspective_projection_matrix(fovy, aspect, near, far, dtype=None):
     """Creates perspective projection matrix.
@@ -247,16 +263,18 @@ def create_perspective_projection_matrix(fovy, aspect, near, far, dtype=None):
     """
     ymax = near * np.tan(fovy * np.pi / 360.0)
     xmax = ymax * aspect
-    return create_perspective_projection_matrix_from_bounds(-xmax, xmax, -ymax, ymax, near, far)
+    return create_perspective_projection_matrix_from_bounds(-xmax, xmax, -ymax,
+                                                            ymax, near, far)
+
 
 def create_perspective_projection_matrix_from_bounds(
-    left,
-    right,
-    bottom,
-    top,
-    near,
-    far,
-    dtype=None
+        left,
+        right,
+        bottom,
+        top,
+        near,
+        far,
+        dtype=None
 ):
     """Creates a perspective projection matrix using the specified near
     plane dimensions.
@@ -297,20 +315,21 @@ def create_perspective_projection_matrix_from_bounds(
     F = 2. * near / (top - bottom)
 
     return np.array((
-        (  E, 0., 0., 0.),
-        ( 0.,  F, 0., 0.),
-        (  A,  B,  C,-1.),
-        ( 0., 0.,  D, 0.),
+        (E, 0., 0., 0.),
+        (0., F, 0., 0.),
+        (A, B, C, -1.),
+        (0., 0., D, 0.),
     ), dtype=dtype)
 
+
 def create_orthogonal_projection_matrix(
-    left,
-    right,
-    bottom,
-    top,
-    near,
-    far,
-    dtype=None
+        left,
+        right,
+        bottom,
+        top,
+        near,
+        far,
+        dtype=None
 ):
     """Creates an orthogonal projection matrix.
 
@@ -354,11 +373,12 @@ def create_orthogonal_projection_matrix(
     Tz = -(far + near) / fmn
 
     return np.array((
-        ( A, 0., 0., 0.),
-        (0.,  B, 0., 0.),
-        (0., 0.,  C, 0.),
+        (A, 0., 0., 0.),
+        (0., B, 0., 0.),
+        (0., 0., C, 0.),
         (Tx, Ty, Tz, 1.),
     ), dtype=dtype)
+
 
 def inverse(m):
     """Returns the inverse of the matrix.

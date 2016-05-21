@@ -4,7 +4,7 @@ try:
 except:
     import unittest
 import numpy as np
-from math3 import Quaternion, Matrix44, Matrix33, Vector3, Vector4, euler
+from math3 import Quaternion, Matrix4, Matrix3, Vector3, Vector4, euler
 
 
 class test_matrix_quaternion(unittest.TestCase):
@@ -14,11 +14,11 @@ class test_matrix_quaternion(unittest.TestCase):
         Create a matrix and quaternion, rotate each by the same values
         then convert matrix<->quaternion and check the results are the same.
         """
-        m = Matrix44.from_x_rotation(np.pi / 2.)
+        m = Matrix4.from_x_rotation(np.pi / 2.)
         mq = Quaternion.from_matrix(m)
 
         q = Quaternion.from_x_rotation(np.pi / 2.)
-        qm = Matrix44.from_quaternion(q)
+        qm = Matrix4.from_quaternion(q)
 
         self.assertTrue(np.allclose(np.dot([1., 0., 0., 1.], m), [1., 0., 0., 1.]))
         self.assertTrue(np.allclose(np.dot([1., 0., 0., 1.], qm), [1., 0., 0., 1.]))
@@ -31,10 +31,10 @@ class test_matrix_quaternion(unittest.TestCase):
 
     def test_euler_equivalence(self):
         eulers = euler.create_from_x_rotation(np.pi / 2.)
-        m = Matrix33.from_x_rotation(np.pi / 2.)
+        m = Matrix3.from_x_rotation(np.pi / 2.)
         q = Quaternion.from_x_rotation(np.pi / 2.)
-        qm = Matrix33.from_quaternion(q)
-        em = Matrix33.from_eulers(eulers)
+        qm = Matrix3.from_quaternion(q)
+        em = Matrix3.from_eulers(eulers)
         self.assertTrue(np.allclose(qm, m))
         self.assertTrue(np.allclose(qm, em))
         self.assertTrue(np.allclose(m, em))

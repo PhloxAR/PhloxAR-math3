@@ -4,8 +4,8 @@ try:
 except:
     import unittest
 import numpy as np
-from math3.objects.matrix33 import Matrix33
-from math3.objects.matrix44 import Matrix44
+from math3.objects.matrix3 import Matrix3
+from math3.objects.matrix4 import Matrix4
 from math3.objects.quaternion import Quaternion
 from math3.objects.vector3 import Vector3
 from math3.objects.vector4 import Vector4
@@ -191,7 +191,7 @@ class test_object_quaternion(unittest.TestCase):
 
     def test_operators_matrix33(self):
         q = Quaternion()
-        m = Matrix33.from_x_rotation(0.5)
+        m = Matrix3.from_x_rotation(0.5)
 
         # add
         self.assertRaises(ValueError, lambda: q + m)
@@ -207,7 +207,7 @@ class test_object_quaternion(unittest.TestCase):
 
     def test_operators_matrix44(self):
         q = Quaternion()
-        m = Matrix44.from_x_rotation(0.5)
+        m = Matrix4.from_x_rotation(0.5)
 
         # add
         self.assertRaises(ValueError, lambda: q + m)

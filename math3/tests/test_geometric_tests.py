@@ -3,14 +3,16 @@ try:
 except:
     import unittest
 import numpy as np
+
 from math3 import geometric_tests as gt
-from math3 import line, plane, ray, sphere
+from math3 import plane, ray
+from math3.funcs import sphere, line
+
 
 class test_geometric_tests(unittest.TestCase):
     def test_import(self):
         import math3
         math3.geometric_tests
-        from math3 import geometric_tests
 
     def test_point_intersect_line(self):
         p = np.array([1.,1.,1.])
@@ -219,17 +221,17 @@ class test_geometric_tests(unittest.TestCase):
 
     def test_sphere_does_intersect_sphere_2(self):
         s1 = sphere.create()
-        s2 = sphere.create([1.,0.,0.])
+        s2 = sphere.create([1., 0., 0.])
         self.assertTrue(gt.sphere_does_intersect_sphere(s1, s2))
 
     def test_sphere_does_intersect_sphere_3(self):
         s1 = sphere.create()
-        s2 = sphere.create([2.,0.,0.], 1.0)
+        s2 = sphere.create([2., 0., 0.], 1.0)
         self.assertTrue(gt.sphere_does_intersect_sphere(s1, s2))
 
     def test_sphere_does_intersect_sphere_4(self):
         s1 = sphere.create()
-        s2 = sphere.create([2.,0.,0.], 0.5)
+        s2 = sphere.create([2., 0., 0.], 0.5)
         self.assertTrue(False == gt.sphere_does_intersect_sphere(s1, s2))
 
     def test_sphere_penetration_sphere_1(self):
@@ -239,17 +241,17 @@ class test_geometric_tests(unittest.TestCase):
 
     def test_sphere_penetration_sphere_2(self):
         s1 = sphere.create()
-        s2 = sphere.create([1.,0.,0.], 1.0)
+        s2 = sphere.create([1., 0., 0.], 1.0)
         self.assertEqual(gt.sphere_penetration_sphere(s1, s2), 1.0)
 
     def test_sphere_penetration_sphere_3(self):
         s1 = sphere.create()
-        s2 = sphere.create([2.,0.,0.], 1.0)
+        s2 = sphere.create([2., 0., 0.], 1.0)
         self.assertEqual(gt.sphere_penetration_sphere(s1, s2), 0.0)
 
     def test_sphere_penetration_sphere_4(self):
         s1 = sphere.create()
-        s2 = sphere.create([3.,0.,0.], 1.0)
+        s2 = sphere.create([3., 0., 0.], 1.0)
         self.assertEqual(gt.sphere_penetration_sphere(s1, s2), 0.0)
 
 if __name__ == '__main__':

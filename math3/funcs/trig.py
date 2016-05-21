@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Provide functions for the trigonometric functions.
+"""
+Provide functions for the trigonometric functions.
 """
 from __future__ import absolute_import, division, print_function
 import math
@@ -7,6 +8,7 @@ import math
 
 def aspect_ratio(width, height):
     return float(width) / float(height)
+
 
 def calculate_fov(zoom, height=1.0):
     """Calculates the required FOV to set the
@@ -23,6 +25,7 @@ def calculate_fov(zoom, height=1.0):
     rad_theta = 2.0 * math.atan2(height / 2.0, zoom)
     return math.degrees(rad_theta)
 
+
 def calculate_zoom(fov, height=1.0):
     """Calculates the zoom (distance) from the camera
     with the specified FOV and height of image.
@@ -37,6 +40,7 @@ def calculate_zoom(fov, height=1.0):
     """
     return float(height) / math.tan(fov / 2.0)
 
+
 def calculate_height(fov, zoom):
     """Performs the opposite of calculate_fov.
     Used to find the current height at a specific distance.
@@ -49,6 +53,7 @@ def calculate_height(fov, zoom):
     """
     height = zoom * (math.tan(fov / 2.0))
     return height
+
 
 def calculate_plane_size(aspect_ratio, fov, distance):
     """Calculates the width and height of a plane at the
@@ -70,4 +75,3 @@ def calculate_plane_size(aspect_ratio, fov, distance):
     width = height * aspect_ratio
 
     return width * 2.0, height * 2.0
-

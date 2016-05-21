@@ -3,130 +3,130 @@ try:
 except:
     import unittest
 import numpy as np
-from math3 import rectangle
+
+from math3.funcs import rect
 
 
 class test_rectangle(unittest.TestCase):
     def test_import(self):
         import math3
-        math3.rectangle
-        from math3 import rectangle
+        math3.funcs.rectfunc
 
     def test_create(self):
-        result = rectangle.create()
+        result = rect.create()
         np.testing.assert_almost_equal(result, [[0,0],[1,1]], decimal=5)
 
     def test_create_dtype(self):
-        result = rectangle.create(dtype=np.float)
+        result = rect.create(dtype=np.float)
         np.testing.assert_almost_equal(result, [[0.,0.],[1.,1.]], decimal=5)
 
     def test_create_zeros(self):
-        result = rectangle.create_zeros()
+        result = rect.create_zeros()
         np.testing.assert_almost_equal(result, [[0,0],[0,0]], decimal=5)
 
     def test_create_from_bounds(self):
-        result = rectangle.create_from_bounds(-1, 1, -2, 2)
+        result = rect.create_from_bounds(-1, 1, -2, 2)
         np.testing.assert_almost_equal(result, [[-1,-2],[2,4]], decimal=5)
 
     def test_bounds(self):
-        rect = rectangle.create_from_bounds(-1, 1, -2, 2)
-        result = rectangle.bounds(rect)
+        rect = rect.create_from_bounds(-1, 1, -2, 2)
+        result = rect.bounds(rect)
         np.testing.assert_almost_equal(result, (-1,1,-2,2), decimal=5)
 
     def test_scale_by_vector(self):
-        result = rectangle.scale_by_vector([[-1.,-2.],[2.,4.]], [2.,3.])
+        result = rect.scale_by_vector([[-1., -2.], [2., 4.]], [2., 3.])
         np.testing.assert_almost_equal(result, [[-2.,-6.],[4.,12.]], decimal=5)
 
     def test_scale_by_vector3(self):
-        result = rectangle.scale_by_vector([[-1.,-2.],[2.,4.]], [2.,3.,4.])
+        result = rect.scale_by_vector([[-1., -2.], [2., 4.]], [2., 3., 4.])
         np.testing.assert_almost_equal(result, [[-2.,-6.],[4.,12.]], decimal=5)
 
     def test_right(self):
-        result = rectangle.right([[1.,2.],[3.,4.]])
+        result = rect.right([[1., 2.], [3., 4.]])
         np.testing.assert_almost_equal(result, 4., decimal=5)
 
     def test_right_negative(self):
-        result = rectangle.right([[1.,2.],[-3.,-4.]])
+        result = rect.right([[1., 2.], [-3., -4.]])
         np.testing.assert_almost_equal(result, 1., decimal=5)
 
     def test_left(self):
-        result = rectangle.left([[1.,2.],[3.,4.]])
+        result = rect.left([[1., 2.], [3., 4.]])
         np.testing.assert_almost_equal(result, 1., decimal=5)
 
     def test_left_negative(self):
-        result = rectangle.left([[1.,2.],[-3.,-4.]])
+        result = rect.left([[1., 2.], [-3., -4.]])
         np.testing.assert_almost_equal(result, -2., decimal=5)
 
     def test_top(self):
-        result = rectangle.top([[1.,2.],[3.,4.]])
+        result = rect.top([[1., 2.], [3., 4.]])
         np.testing.assert_almost_equal(result, 6., decimal=5)
 
     def test_top_negative(self):
-        result = rectangle.top([[1.,2.],[-3.,-4.]])
+        result = rect.top([[1., 2.], [-3., -4.]])
         np.testing.assert_almost_equal(result, 2., decimal=5)
 
     def test_bottom(self):
-        result = rectangle.bottom([[1.,2.],[3.,4.]])
+        result = rect.bottom([[1., 2.], [3., 4.]])
         np.testing.assert_almost_equal(result, 2., decimal=5)
 
     def test_bottom_negative(self):
-        result = rectangle.bottom([[1.,2.],[-3.,-4.]])
+        result = rect.bottom([[1., 2.], [-3., -4.]])
         np.testing.assert_almost_equal(result, -2., decimal=5)
 
     def test_x(self):
-        result = rectangle.x([[1.,2.],[3.,4.]])
+        result = rect.x([[1., 2.], [3., 4.]])
         np.testing.assert_almost_equal(result, 1., decimal=5)
 
     def test_x_negative(self):
-        result = rectangle.x([[1.,2.],[-3.,-4.]])
+        result = rect.x([[1., 2.], [-3., -4.]])
         np.testing.assert_almost_equal(result, 1., decimal=5)
 
     def test_y(self):
-        result = rectangle.y([[1.,2.],[3.,4.]])
+        result = rect.y([[1., 2.], [3., 4.]])
         np.testing.assert_almost_equal(result, 2., decimal=5)
 
     def test_y_negative(self):
-        result = rectangle.y([[1.,2.],[-3.,-4.]])
+        result = rect.y([[1., 2.], [-3., -4.]])
         np.testing.assert_almost_equal(result, 2., decimal=5)
 
     def test_width(self):
-        result = rectangle.width([[1.,2.],[3.,4.]])
+        result = rect.width([[1., 2.], [3., 4.]])
         np.testing.assert_almost_equal(result, 3., decimal=5)
 
     def test_width_negative(self):
-        result = rectangle.width([[1.,2.],[-3.,-4.]])
+        result = rect.width([[1., 2.], [-3., -4.]])
         np.testing.assert_almost_equal(result, -3., decimal=5)
 
     def test_height(self):
-        result = rectangle.height([[1.,2.],[3.,4.]])
+        result = rect.height([[1., 2.], [3., 4.]])
         np.testing.assert_almost_equal(result, 4., decimal=5)
 
     def test_height_negative(self):
-        result = rectangle.height([[1.,2.],[-3.,-4.]])
+        result = rect.height([[1., 2.], [-3., -4.]])
         np.testing.assert_almost_equal(result, -4., decimal=5)
 
     def test_abs_height(self):
-        result = rectangle.abs_height([[1.,2.],[3.,4.]])
+        result = rect.abs_height([[1., 2.], [3., 4.]])
         np.testing.assert_almost_equal(result, 4., decimal=5)
 
     def test_abs_height_negative(self):
-        result = rectangle.abs_height([[1.,2.],[-3.,-4.]])
+        result = rect.abs_height([[1., 2.], [-3., -4.]])
         np.testing.assert_almost_equal(result, 4., decimal=5)
 
     def test_abs_width(self):
-        result = rectangle.abs_width([[1.,2.],[3.,4.]])
+        result = rect.abs_width([[1., 2.], [3., 4.]])
         np.testing.assert_almost_equal(result, 3., decimal=5)
 
     def test_abs_width_negative(self):
-        result = rectangle.abs_width([[1.,2.],[-3.,-4.]])
+        result = rect.abs_width([[1., 2.], [-3., -4.]])
         np.testing.assert_almost_equal(result, 3., decimal=5)
 
     def test_position(self):
-        result = rectangle.position([[1.,2.],[-3.,-4.]])
+        result = rect.position([[1., 2.], [-3., -4.]])
         np.testing.assert_almost_equal(result, [1.,2.], decimal=5)
 
     def test_size(self):
-        result = rectangle.size([[1.,2.],[-3.,-4.]])
+        result = rect.size([[1., 2.], [-3., -4.]])
         np.testing.assert_almost_equal(result, [-3.,-4.], decimal=5)
 
     

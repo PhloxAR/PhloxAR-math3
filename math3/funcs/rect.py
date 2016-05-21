@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Provide functions for the creation and manipulation of 2D Rectangles.
+"""
+Provide functions for the creation and manipulation of 2D Rectangles.
 
 Rectangles are represented using a numpy.array of shape (2,2,).
 
@@ -8,7 +9,7 @@ The second value is a vector with the width, height of the rectangle.
 """
 from __future__ import absolute_import, division, print_function
 import numpy as np
-from .utils import all_parameters_as_numpy_arrays, parameters_as_numpy_arrays
+from math3.utils import all_parameters_as_numpy_arrays, parameters_as_numpy_arrays
 
 
 class index:
@@ -30,8 +31,10 @@ def create(x=0., y=0., width=1., height=1., dtype=None):
     """
     return np.array([[x, y], [width, height]], dtype=dtype)
 
+
 def create_zeros(dtype=None):
-    return np.zeros((2,2), dtype=dtype)
+    return np.zeros((2, 2), dtype=dtype)
+
 
 def create_from_bounds(left, right, bottom, top, dtype=None):
     """Creates a rectangle from the specified boundaries.
@@ -50,12 +53,13 @@ def create_from_bounds(left, right, bottom, top, dtype=None):
     ymax = max(top, bottom)
 
     return create(
-        xmin,
-        ymin,
-        xmax - xmin,
-        ymax - ymin,
-        dtype
+            xmin,
+            ymin,
+            xmax - xmin,
+            ymax - ymin,
+            dtype
     )
+
 
 @all_parameters_as_numpy_arrays
 def bounds(rect):
@@ -66,10 +70,10 @@ def bounds(rect):
     :rtype: Tuple of 4 floats
     :return: The absolute left, right, bottom and top of the rectangle.
     """
-    left = rect[0,0]
-    right = rect[0,0] + rect[1,0]
-    top = rect[0,1]
-    bottom = rect[0,1] + rect[1,1]
+    left = rect[0, 0]
+    right = rect[0, 0] + rect[1, 0]
+    top = rect[0, 1]
+    bottom = rect[0, 1] + rect[1, 1]
 
     xmin = min(left, right)
     xmax = max(left, right)
@@ -77,6 +81,7 @@ def bounds(rect):
     ymax = max(top, bottom)
 
     return xmin, xmax, ymin, ymax
+
 
 @all_parameters_as_numpy_arrays
 def position(rect):
@@ -90,6 +95,7 @@ def position(rect):
     """
     return rect[0].copy()
 
+
 @all_parameters_as_numpy_arrays
 def size(rect):
     """Returns the literal size of the rectangle.
@@ -101,6 +107,7 @@ def size(rect):
     """
     return rect[1].copy()
 
+
 def abs_size(rect):
     """Returns the absolute size of the rectangle.
 
@@ -108,6 +115,7 @@ def abs_size(rect):
     :return: The absolute size of the rectangle.
     """
     return np.absolute(rect[1])
+
 
 def x(rect):
     """Returns the X position of the rectangle.
@@ -120,6 +128,7 @@ def x(rect):
     """
     return rect[0][0]
 
+
 def y(rect):
     """Returns the Y position of the rectangle.
 
@@ -131,6 +140,7 @@ def y(rect):
     """
     return rect[0][1]
 
+
 def width(rect):
     """Returns the literal width of the rectangle.
 
@@ -139,6 +149,7 @@ def width(rect):
         negative value.
     """
     return rect[1][0]
+
 
 def abs_width(rect):
     """Returns the absolute width of the rectangle.
@@ -150,6 +161,7 @@ def abs_width(rect):
     """
     return abs(width(rect))
 
+
 def height(rect):
     """Returns the literal height of the rectangle.
 
@@ -158,6 +170,7 @@ def height(rect):
         negative value.
     """
     return rect[1][1]
+
 
 def abs_height(rect):
     """Returns the absolute height of the rectangle.
@@ -169,6 +182,7 @@ def abs_height(rect):
     """
     return abs(height(rect))
 
+
 def top(rect):
     """Returns the top most Y value of the rectangle.
 
@@ -178,9 +192,10 @@ def top(rect):
     :return: The biggest Y value.
     """
     return max(
-        rect[0][1],
-        rect[0][1] + rect[1][1]
-       )
+            rect[0][1],
+            rect[0][1] + rect[1][1]
+    )
+
 
 def bottom(rect):
     """Returns the bottom most Y value of the rectangle.
@@ -191,9 +206,10 @@ def bottom(rect):
     :return: The smallest Y value.
     """
     return min(
-        rect[0][1],
-        rect[0][1] + rect[1][1]
-       )
+            rect[0][1],
+            rect[0][1] + rect[1][1]
+    )
+
 
 def left(rect):
     """Returns the left most X value of the rectangle.
@@ -204,9 +220,10 @@ def left(rect):
     :return: The smallest X value.
     """
     return min(
-        rect[0][0],
-        rect[0][0] + rect[1][0]
-       )
+            rect[0][0],
+            rect[0][0] + rect[1][0]
+    )
+
 
 def right(rect):
     """Returns the right most X value of the rectangle.
@@ -217,9 +234,10 @@ def right(rect):
     :return: The biggest X value.
     """
     return max(
-        rect[0][0],
-        rect[0][0] + rect[1][0]
-       )
+            rect[0][0],
+            rect[0][0] + rect[1][0]
+    )
+
 
 @parameters_as_numpy_arrays('rect')
 def scale_by_vector(rect, vec):
@@ -237,9 +255,8 @@ def scale_by_vector(rect, vec):
     """
     return rect * vec[:2]
 
+
 def aspect_ratio(rect):
     width = float(abs_width(rect))
     height = float(abs_height(rect))
     return width / height
-
-

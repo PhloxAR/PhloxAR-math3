@@ -1,12 +1,18 @@
 # -*- coding: utf-8 -*-
-"""Defines a number of functions to test interactions between
+"""
+Defines a number of functions to test interactions between
 various forms data types.
 """
 from __future__ import absolute_import, division, print_function
+
 import math
+
 import numpy as np
-from . import rectangle, vector, vector3
-from .utils import all_parameters_as_numpy_arrays, parameters_as_numpy_arrays
+
+from math3.funcs import rect
+from math3 import vector, vector3
+from math3.utils import all_parameters_as_numpy_arrays, \
+    parameters_as_numpy_arrays
 
 """
 TODO: line_intersect_plane
@@ -15,6 +21,7 @@ TODO: ray_intersect_ray
 TODO: line_intersect_line
 TODO: line_segment_intersect_line_segment
 """
+
 
 @all_parameters_as_numpy_arrays
 def point_intersect_line(point, line):
@@ -32,6 +39,7 @@ def point_intersect_line(point, line):
     if np.count_nonzero(cross) > 0:
         return None
     return point
+
 
 @all_parameters_as_numpy_arrays
 def point_intersect_line_segment(point, line):
@@ -57,6 +65,7 @@ def point_intersect_line_segment(point, line):
         return None
     return point
 
+
 @all_parameters_as_numpy_arrays
 def point_intersect_rectangle(point, rect):
     """Calculates the intersection point of a point and a 2D rectangle.
@@ -66,14 +75,15 @@ def point_intersect_rectangle(point, rect):
     :return: Returns True if the point is touching
     or within the rectangle.
     """
-    left, right, bottom, top = rectangle.bounds(rect)
+    left, right, bottom, top = rect.bounds(rect)
     if \
-        point[0] < left or \
-        point[0] > right or \
-        point[1] < bottom or \
-        point[1] > top:
+                                            point[0] < left or \
+                                            point[0] > right or \
+                                    point[1] < bottom or \
+                            point[1] > top:
         return None
     return point
+
 
 @parameters_as_numpy_arrays('ray', 'plane')
 def ray_intersect_plane(ray, plane, front_only=False):
@@ -119,6 +129,7 @@ def ray_intersect_plane(ray, plane, front_only=False):
     t = (pd - p0_n) / rd_n
     return ray[0] + (ray[1] * t)
 
+
 @all_parameters_as_numpy_arrays
 def point_closest_point_on_ray(point, ray):
     """Calculates the point on a ray that is closest to a point.
@@ -141,6 +152,7 @@ def point_closest_point_on_ray(point, ray):
     relative_point = (point - ray[0])
     t = vector.dot(relative_point, normalised_n)
     return ray[0] + (normalised_n * t)
+
 
 @all_parameters_as_numpy_arrays
 def point_closest_point_on_line(point, line):
@@ -168,6 +180,7 @@ def point_closest_point_on_line(point, line):
     rl = vector.normalise(rl)
     dot = vector.dot(rl, rp)
     return line[0] + (rl * dot)
+
 
 @all_parameters_as_numpy_arrays
 def point_closest_point_on_line_segment(point, segment):
@@ -202,6 +215,7 @@ def point_closest_point_on_line_segment(point, segment):
     # perform the same calculation as closest_point_on_line
     return segment[0] + (rl * dot)
 
+
 @all_parameters_as_numpy_arrays
 def vector_parallel_vector(v1, v2):
     """Checks if two vectors are parallel.
@@ -214,7 +228,8 @@ def vector_parallel_vector(v1, v2):
     # if the result is 0, then they are parallel
     cross = vector3.cross(v1, v2)
     return 0 == np.count_nonzero(cross)
-    
+
+
 @all_parameters_as_numpy_arrays
 def ray_parallel_ray(ray1, ray2):
     """Checks if two rays are parallel.
@@ -225,7 +240,8 @@ def ray_parallel_ray(ray1, ray2):
     """
     # we use a cross product in-case the ray direction
     # isn't unit length
-    return vector_parallel_vector(ray1[ 1 ], ray2[ 1 ])
+    return vector_parallel_vector(ray1[1], ray2[1])
+
 
 @all_parameters_as_numpy_arrays
 def ray_coincident_ray(ray1, ray2):
@@ -256,6 +272,7 @@ def ray_coincident_ray(ray1, ray2):
         return True
     return False
 
+
 @all_parameters_as_numpy_arrays
 def ray_intersect_aabb(ray, aabb):
     """Calculates the intersection point of a ray and an AABB
@@ -274,17 +291,16 @@ def ray_intersect_aabb(ray, aabb):
     # so where the ray direction value is 0.0, just use infinity
     # which is what we want anyway
     direction = ray[1]
-    dir_fraction = np.empty(3, dtype = ray.dtype)
+    dir_fraction = np.empty(3, dtype=ray.dtype)
     dir_fraction[direction == 0.0] = np.inf
     dir_fraction[direction != 0.0] = np.divide(1.0, direction[direction != 0.0])
 
-    t1 = (aabb[0,0] - ray[0,0]) * dir_fraction[ 0 ]
-    t2 = (aabb[1,0] - ray[0,0]) * dir_fraction[ 0 ]
-    t3 = (aabb[0,1] - ray[0,1]) * dir_fraction[ 1 ]
-    t4 = (aabb[1,1] - ray[0,1]) * dir_fraction[ 1 ]
-    t5 = (aabb[0,2] - ray[0,2]) * dir_fraction[ 2 ]
-    t6 = (aabb[1,2] - ray[0,2]) * dir_fraction[ 2 ]
-
+    t1 = (aabb[0, 0] - ray[0, 0]) * dir_fraction[0]
+    t2 = (aabb[1, 0] - ray[0, 0]) * dir_fraction[0]
+    t3 = (aabb[0, 1] - ray[0, 1]) * dir_fraction[1]
+    t4 = (aabb[1, 1] - ray[0, 1]) * dir_fraction[1]
+    t5 = (aabb[0, 2] - ray[0, 2]) * dir_fraction[2]
+    t6 = (aabb[1, 2] - ray[0, 2]) * dir_fraction[2]
 
     tmin = max(min(t1, t2), min(t3, t4), min(t5, t6))
     tmax = min(max(t1, t2), max(t3, t4), max(t5, t6))
@@ -305,6 +321,7 @@ def ray_intersect_aabb(ray, aabb):
     point = ray[0] + (ray[1] * t)
     return point
 
+
 @all_parameters_as_numpy_arrays
 def point_height_above_plane(point, plane):
     """Calculates how high a point is above a plane.
@@ -324,6 +341,7 @@ def point_height_above_plane(point, plane):
     Just perform Pn . [XYZ1]
     """
     return np.dot(plane, [point[0], point[1], point[2], 1.0])
+
 
 @all_parameters_as_numpy_arrays
 def point_closest_point_on_plane(point, plane):
@@ -348,6 +366,7 @@ def point_closest_point_on_plane(point, plane):
     d = np.dot(p, n)
     qn = np.dot(point, n)
     return point + (n * (d - qn))
+
 
 @all_parameters_as_numpy_arrays
 def sphere_does_intersect_sphere(s1, s2):
@@ -374,6 +393,7 @@ def sphere_does_intersect_sphere(s1, s2):
     if distance_squared > radii_squared:
         return False
     return True
+
 
 @all_parameters_as_numpy_arrays
 def sphere_penetration_sphere(s1, s2):

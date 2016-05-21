@@ -7,7 +7,7 @@ except:
 
 class test_oo_examples(unittest.TestCase):
     def test_oo_examples(self):
-        from math3 import Quaternion, Matrix44, Vector3
+        from math3 import Quaternion, Matrix4, Vector3
         import numpy as np
 
         point = Vector3([1.,2.,3.])
@@ -24,14 +24,14 @@ class test_oo_examples(unittest.TestCase):
 
         # create a matrix
         # start our matrix off using the scale
-        matrix = Matrix44.from_scale(scale)
+        matrix = Matrix4.from_scale(scale)
 
         # apply our orientation
         # we can multiply matricies and quaternions directly!
         matrix = matrix * orientation
 
         # apply our translation
-        translation = Matrix44.from_translation(translation)
+        translation = Matrix4.from_translation(translation)
         matrix = matrix * translation
 
         # transform our point by the matrix
@@ -39,40 +39,40 @@ class test_oo_examples(unittest.TestCase):
         point = matrix * point
 
     def test_conversions(self):
-        from math3 import Quaternion, Matrix33, Matrix44, Vector3, Vector4
+        from math3 import Quaternion, Matrix3, Matrix4, Vector3, Vector4
 
         v3 = Vector3([1.,0.,0.])
         v4 = Vector4.from_vector3(v3, w=1.0)
         v3, w = Vector3.from_vector4(v4)
 
-        m44 = Matrix44()
+        m44 = Matrix4()
         q = Quaternion(m44)
-        m33 = Matrix33(q)
+        m33 = Matrix3(q)
 
-        m33 = Matrix44().matrix33
-        m44 = Matrix33().matrix44
-        q = Matrix44().quaternion
-        q = Matrix33().quaternion
+        m33 = Matrix4().matrix33
+        m44 = Matrix3().matrix44
+        q = Matrix4().quaternion
+        q = Matrix3().quaternion
 
         m33 = Quaternion().matrix33
         m44 = Quaternion().matrix44
 
     def test_operators(self):
-        from math3 import Quaternion, Matrix44, Matrix33, Vector3, Vector4
+        from math3 import Quaternion, Matrix4, Matrix3, Vector3, Vector4
         import numpy as np
 
         # matrix multiplication
-        m = Matrix44() * Matrix33()
-        m = Matrix44() * Quaternion()
-        m = Matrix33() * Quaternion()
+        m = Matrix4() * Matrix3()
+        m = Matrix4() * Quaternion()
+        m = Matrix3() * Quaternion()
 
         # matrix inverse
-        m = ~Matrix44.from_x_rotation(np.pi)
+        m = ~Matrix4.from_x_rotation(np.pi)
 
         # quaternion multiplication
         q = Quaternion() * Quaternion()
-        q = Quaternion() * Matrix44()
-        q = Quaternion() * Matrix33()
+        q = Quaternion() * Matrix4()
+        q = Quaternion() * Matrix3()
 
         # quaternion inverse (conjugate)
         q = ~Quaternion()
@@ -86,9 +86,9 @@ class test_oo_examples(unittest.TestCase):
 
         # vector transform
         v = Quaternion() * Vector3()
-        v = Matrix44() * Vector3()
-        v = Matrix44() * Vector4()
-        v = Matrix33() * Vector3()
+        v = Matrix4() * Vector3()
+        v = Matrix4() * Vector4()
+        v = Matrix3() * Vector3()
 
         # dot and cross products
         dot = Vector3() | Vector3()

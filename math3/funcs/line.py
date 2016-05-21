@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Provide functions for the creation and manipulation of Lines.
+"""
+Provide functions for the creation and manipulation of Lines.
 
 A Line data structure is simply a numpy.array with 2 vectors::
 
@@ -21,7 +22,7 @@ to determine how a line will be interpreted.
 """
 from __future__ import absolute_import, division, print_function
 import numpy as np
-from .utils import all_parameters_as_numpy_arrays, parameters_as_numpy_arrays
+from math3.utils import all_parameters_as_numpy_arrays, parameters_as_numpy_arrays
 
 
 class index:
@@ -38,7 +39,8 @@ def create_zeros(dtype=None):
     :rtype: numpy.array
     :return: A line with both start and end points at (0,0,0).
     """
-    return np.zeros((2,3), dtype=dtype)
+    return np.zeros((2, 3), dtype=dtype)
+
 
 def create_from_points(v1, v2, dtype=None):
     """Creates a line from 2 vectors.
@@ -51,6 +53,7 @@ def create_from_points(v1, v2, dtype=None):
     :return: A line extending from v1 to v2.
     """
     return np.array([v1, v2], dtype=dtype)
+
 
 @all_parameters_as_numpy_arrays
 def create_from_ray(ray):
@@ -67,6 +70,7 @@ def create_from_ray(ray):
     # position
     return np.array([ray[0], ray[0] + ray[1]], dtype=ray.dtype)
 
+
 @all_parameters_as_numpy_arrays
 def start(line):
     """Extracts the start point of the line.
@@ -77,6 +81,7 @@ def start(line):
     """
     return line[0].copy()
 
+
 @all_parameters_as_numpy_arrays
 def end(line):
     """Extracts the end point of the line.
@@ -86,4 +91,3 @@ def end(line):
     :return: The ending point of the line.
     """
     return line[1].copy()
-

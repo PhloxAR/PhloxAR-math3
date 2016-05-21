@@ -4,8 +4,8 @@ try:
 except:
     import unittest
 import numpy as np
-from math3.objects.matrix33 import Matrix33
-from math3.objects.matrix44 import Matrix44
+from math3.objects.matrix3 import Matrix3
+from math3.objects.matrix4 import Matrix4
 from math3.objects.quaternion import Quaternion
 from math3.objects.vector3 import Vector3
 from math3.objects.vector4 import Vector4
@@ -43,11 +43,11 @@ class test_object_vector4(unittest.TestCase):
         self.assertTrue(np.array_equal(v, [0.,0.,0.,0.]))
         self.assertEqual(v.shape, self._shape)
 
-        m = Matrix44.from_translation([1.,2.,3.])
+        m = Matrix4.from_translation([1., 2., 3.])
         v = Vector4.from_matrix44_translation(m)
         self.assertTrue(np.array_equal(v, [1.,2.,3.,1.]))
 
-        m = Matrix44.from_translation([1.,2.,3.])
+        m = Matrix4.from_translation([1., 2., 3.])
         v = Vector4(m)
         self.assertTrue(np.array_equal(v, [1.,2.,3.,1.]))
 
@@ -64,7 +64,7 @@ class test_object_vector4(unittest.TestCase):
 
     def test_operators_matrix33(self):
         v = Vector4()
-        m = Matrix33.from_x_rotation(0.5)
+        m = Matrix3.from_x_rotation(0.5)
 
         # add
         self.assertRaises(ValueError, lambda: v + m)
@@ -80,7 +80,7 @@ class test_object_vector4(unittest.TestCase):
 
     def test_operators_matrix44(self):
         v = Vector4()
-        m = Matrix44.from_x_rotation(0.5)
+        m = Matrix4.from_x_rotation(0.5)
 
         # add
         self.assertRaises(ValueError, lambda: v + m)

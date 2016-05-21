@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Provides functions to calculate and manipulate
+"""
+Provides functions to calculate and manipulate
 Axis-Aligned Minimum Bounding Boxes (AAMBB).
 
 AAMBB are a simple 3D rectangle with no orientation.
@@ -22,9 +23,12 @@ TODO: add point_within_aabb
 TODO: use point_within_aabb for unit tests
 """
 from __future__ import absolute_import, division, print_function
+
 import numpy as np
-from . import aabb, vector
-from .utils import all_parameters_as_numpy_arrays, parameters_as_numpy_arrays
+
+from math3.funcs import aabb
+from math3 import vector
+from math3.utils import all_parameters_as_numpy_arrays, parameters_as_numpy_arrays
 
 
 class index:

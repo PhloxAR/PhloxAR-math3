@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Provide functions for the creation and manipulation of Planes.
+"""
+Provide functions for the creation and manipulation of Planes.
 
 Planes are represented using a numpy.array of shape (4,).
 The values represent the plane equation using the values A,B,C,D.
@@ -12,8 +13,8 @@ The fourth value is the distance of the plane from the origin, down the normal.
 """
 from __future__ import absolute_import, division, print_function
 import numpy as np
-from . import vector
-from .utils import all_parameters_as_numpy_arrays, parameters_as_numpy_arrays
+from math3 import vector
+from math3.utils import all_parameters_as_numpy_arrays, parameters_as_numpy_arrays
 
 
 def create(normal=None, distance=0.0, dtype=None):
@@ -27,6 +28,7 @@ def create(normal=None, distance=0.0, dtype=None):
     if normal is None:
         normal = [0.0, 0.0, 1.0]
     return np.array([normal[0], normal[1], normal[2], distance], dtype=dtype)
+
 
 @parameters_as_numpy_arrays('vector1', 'vector2', 'vector3')
 def create_from_points(vector1, vector2, vector3, dtype=None):
@@ -53,14 +55,15 @@ def create_from_points(vector1, vector2, vector3, dtype=None):
     # make the vectors relative to vector2
     relV1 = vector1 - vector2
     relV2 = vector3 - vector2
-    
+
     # cross our relative vectors
     normal = np.cross(relV1, relV2)
     if np.count_nonzero(normal) == 0:
         raise ValueError("Vectors are co-incident")
-    
+
     # create our plane
     return create_from_position(position=vector2, normal=normal, dtype=dtype)
+
 
 @parameters_as_numpy_arrays('position', 'normal')
 def create_from_position(position, normal, dtype=None):
@@ -80,6 +83,7 @@ def create_from_position(position, normal, dtype=None):
     d = -np.sum(n * position)
     return create(n, d, dtype)
 
+
 def create_xy(invert=False, distance=0., dtype=None):
     """Create a plane on the XY plane, starting at the origin with +Z being
     the up vector.
@@ -88,6 +92,7 @@ def create_xy(invert=False, distance=0., dtype=None):
     """
     invert = -1. if invert else 1.
     return np.array([0., 0., 1. * invert, distance])
+
 
 def create_xz(invert=False, distance=0., dtype=None):
     """Create a plane on the XZ plane, starting at the origin with +Y being
@@ -98,6 +103,7 @@ def create_xz(invert=False, distance=0., dtype=None):
     invert = -1. if invert else 1.
     return np.array([0., 1. * invert, 0., distance])
 
+
 def create_yz(invert=False, distance=0., dtype=None):
     """Create a plane on the YZ plane, starting at the origin with +X being
     the up vector.
@@ -106,6 +112,7 @@ def create_yz(invert=False, distance=0., dtype=None):
     """
     invert = -1. if invert else 1.
     return np.array([1. * invert, 0., 0., distance])
+
 
 def invert_normal(plane):
     """Flips the normal of the plane.
@@ -118,6 +125,7 @@ def invert_normal(plane):
     # flip the normal, and the distance
     return -plane
 
+
 def position(plane):
     """Extracts the position vector from a plane.
 
@@ -128,6 +136,7 @@ def position(plane):
     :return: A valid position that lies on the plane.
     """
     return plane[:3] * plane[3]
+
 
 def normal(plane):
     """Extracts the normal vector from a plane.
