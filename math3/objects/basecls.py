@@ -48,53 +48,63 @@ class BaseMatrix(BaseObject):
 
     @classmethod
     def identity(cls, dtype=None):
-        """Creates an identity Matrix.
         """
-        return cls(cls._module.create_identity(dtype), dtype)
+        Creates an identity Matrix.
+        """
+        pass
 
     @classmethod
     def from_euler(cls, euler, dtype=None):
-        """Creates a Matrix from the specified Euler angles.
         """
-        return cls(cls._module.create_from_eulers(euler, dtype=dtype))
+        Creates a Matrix from the specified Euler angles.
+        """
+        pass
 
     @classmethod
-    def from_quaternion(cls, quat, dtype=None):
-        """Creates a Matrix from a Quaternion.
+    def from_quaternion(cls, quaternion, dtype=None):
         """
-        return cls(cls._module.create_from_quaternion(quat, dtype=dtype))
+        Creates a Matrix from a Quaternion.
+        """
+        pass
 
     @classmethod
-    def from_inverse_of_quaternion(cls, quat, dtype=None):
-        """Creates a Matrix from the inverse of the specified Quaternion.
+    def from_inverse_of_quaternion(cls, quaternion, dtype=None):
         """
-        return cls(cls._module.create_from_inverse_of_quaternion(quat, dtype=dtype))
+        Creates a Matrix from the inverse of the specified Quaternion.
+        """
+        pass
 
     @classmethod
     def from_scale(cls, scale, dtype=None):
-        return cls(cls._module.create_from_scale(scale, dtype=dtype))
+        pass
 
     @classmethod
     def from_x_rotation(cls, theta, dtype=None):
-        """Creates a Matrix with a rotation around the X-axis.
         """
-        return cls(cls._module.create_from_x_rotation(theta, dtype=dtype))
+        Creates a Matrix with a rotation around the X-axis.
+        """
+        pass
 
     @classmethod
     def from_y_rotation(cls, theta, dtype=None):
-        return cls(cls._module.create_from_y_rotation(theta, dtype=dtype))
+        """
+        Creates a Matrix with a rotation around the Y-axis.
+        """
+        pass
 
     @classmethod
     def from_z_rotation(cls, theta, dtype=None):
-        """Creates a Matrix with a rotation around the Z-axis.
         """
-        return cls(cls._module.create_from_z_rotation(theta, dtype=dtype))
+        Creates a Matrix with a rotation around the Z-axis.
+        """
+        pass
 
     @property
     def inverse(self):
-        """Returns the inverse of this matrix.
         """
-        return type(self)(self._module.inverse(self))
+        Returns the inverse of this matrix.
+        """
+        return None
 
 
 class BaseVector(BaseObject):
