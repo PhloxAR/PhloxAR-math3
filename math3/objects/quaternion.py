@@ -27,8 +27,8 @@ conversions.
     q3 = q1 * q2
 
     # extract a matrix from the quaternion
-    m33 = q3.matrix33
-    m44 = q3.matrix44
+    m33 = q3.mat3
+    m44 = q3.mat4
 
     # convert from matrix back to quaternion
     q4 = Quaternion(m44)
