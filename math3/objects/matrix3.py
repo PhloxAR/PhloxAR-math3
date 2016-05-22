@@ -323,7 +323,7 @@ class Matrix3(BaseMatrix3):
         dtype = dtype or quaternion.dtype
         # the quaternion must be normalised
         if not np.isclose(np.linalg.norm(quaternion), 1.):
-            quaternion = fquat.normalise(quaternion)
+            quaternion = Quaternion.normalise(quaternion)
 
         x, y, z, w = quaternion
 

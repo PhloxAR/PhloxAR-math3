@@ -61,14 +61,14 @@ from __future__ import absolute_import, unicode_literals
 from numbers import Number
 import numpy as np
 from multipledispatch import dispatch
-from .basecls import BaseObject, BaseMatrix, BaseMatrix4, BaseQuaternion, BaseVector, NpProxy
+from .basecls import BaseObject, BaseMatrix, BaseMatrix4, BaseQuaternion, \
+    BaseVector, NpProxy
 from ..utils import parameters_as_numpy_arrays
 from .matrix3 import Matrix3
 from .quaternion import Quaternion
 
 
 class Matrix4(BaseMatrix4):
-
     _shape = (4, 4,)
 
     # m<c> style access
@@ -83,37 +83,37 @@ class Matrix4(BaseMatrix4):
 
     # m<r><c> access
     #: The [0,0] value of this Matrix.
-    m11 = NpProxy((0,0))
+    m11 = NpProxy((0, 0))
     #: The [0,1] value of this Matrix.
-    m12 = NpProxy((0,1))
+    m12 = NpProxy((0, 1))
     #: The [0,2] value of this Matrix.
-    m13 = NpProxy((0,2))
+    m13 = NpProxy((0, 2))
     #: The [0,3] value of this Matrix.
-    m14 = NpProxy((0,3))
+    m14 = NpProxy((0, 3))
     #: The [1,0] value of this Matrix.
-    m21 = NpProxy((1,0))
+    m21 = NpProxy((1, 0))
     #: The [1,1] value of this Matrix.
-    m22 = NpProxy((1,1))
+    m22 = NpProxy((1, 1))
     #: The [1,2] value of this Matrix.
-    m23 = NpProxy((1,2))
+    m23 = NpProxy((1, 2))
     #: The [1,3] value of this Matrix.
-    m24 = NpProxy((1,3))
+    m24 = NpProxy((1, 3))
     #: The [2,0] value of this Matrix.
-    m31 = NpProxy((2,0))
+    m31 = NpProxy((2, 0))
     #: The [2,1] value of this Matrix.
-    m32 = NpProxy((2,1))
+    m32 = NpProxy((2, 1))
     #: The [2,2] value of this Matrix.
-    m33 = NpProxy((2,2))
+    m33 = NpProxy((2, 2))
     #: The [2,3] value of this Matrix.
-    m34 = NpProxy((2,3))
+    m34 = NpProxy((2, 3))
     #: The [3,0] value of this Matrix.
-    m41 = NpProxy((3,0))
+    m41 = NpProxy((3, 0))
     #: The [3,1] value of this Matrix.
-    m42 = NpProxy((3,1))
+    m42 = NpProxy((3, 1))
     #: The [3,2] value of this Matrix.
-    m43 = NpProxy((3,2))
+    m43 = NpProxy((3, 2))
     #: The [3,3] value of this Matrix.
-    m44 = NpProxy((3,3))
+    m44 = NpProxy((3, 3))
 
     # rows
     #: The first row of this Matrix as a numpy.ndarray. This is the same as m1.
@@ -127,13 +127,13 @@ class Matrix4(BaseMatrix4):
 
     # columns
     #: The first column of this Matrix as a numpy.ndarray.
-    c1 = NpProxy((slice(0,4),0))
+    c1 = NpProxy((slice(0, 4), 0))
     #: The second column of this Matrix as a numpy.ndarray.
-    c2 = NpProxy((slice(0,4),1))
+    c2 = NpProxy((slice(0, 4), 1))
     #: The third column of this Matrix as a numpy.ndarray.
-    c3 = NpProxy((slice(0,4),2))
+    c3 = NpProxy((slice(0, 4), 2))
     #: The fourth column of this Matrix as a numpy.ndarray.
-    c4 = NpProxy((slice(0,4),3))
+    c4 = NpProxy((slice(0, 4), 3))
 
     ########################
     # Creation
@@ -174,7 +174,8 @@ class Matrix4(BaseMatrix4):
                                                                     near, far)
 
     @classmethod
-    def perspective_projection_bounds(cls, left, right, top, bottom, near, far, dtype=None):
+    def perspective_projection_bounds(cls, left, right, top, bottom, near, far,
+                                      dtype=None):
         """
         Creates a perspective projection matrix using the specified near
         plane dimensions.
@@ -224,7 +225,8 @@ class Matrix4(BaseMatrix4):
         return cls(mat)
 
     @classmethod
-    def orthogonal_projection(cls, left, right, top, bottom, near, far, dtype=None):
+    def orthogonal_projection(cls, left, right, top, bottom, near, far,
+                              dtype=None):
         """
         Creates an orthogonal projection matrix.
 
@@ -298,7 +300,7 @@ class Matrix4(BaseMatrix4):
                 obj = np.array(value, dtype=dtype)
 
             # matrix3
-            if obj.shape == (3,3) or isinstance(obj, Matrix3):
+            if obj.shape == (3, 3) or isinstance(obj, Matrix3):
                 obj = Matrix4.from_matrix3(obj, dtype=dtype)
             # quaternion
             elif obj.shape == (4,) or isinstance(obj, Quaternion):
