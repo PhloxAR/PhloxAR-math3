@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import numpy as np
-from ..funcs import fvec3, fvec
 
 
 class NpProxy(object):
@@ -17,7 +16,6 @@ class NpProxy(object):
 
 class BaseObject(np.ndarray):
 
-    _module = None
     _shape = None
 
     def __new__(cls, obj):
@@ -104,36 +102,135 @@ class BaseVector(BaseObject):
     def from_matrix44_translation(cls, matrix, dtype=None):
         return cls(cls._module.create_from_matrix44_translation(matrix, dtype))
 
-    def normalise(self):
+    def normalize(self):
         self[:] = self.normalised
 
     @property
-    def normalised(self):
-        return type(self)(self._module.normalise(self))
+    def normalized(self):
+        """
+        Normalizes an Nd list of vectors or a single vector to unit length.
+
+        The vector is **not** changed in place.
+
+        For zero-length vectors, the result will be np.nan.
+
+                numpy.array([ x, y, z ])
+
+            Or an NxM array::
+
+                numpy.array([
+                    [x1, y1, z1],
+                    [x2, y2, z2]
+                ]).
+
+        :rtype: A numpy.array the normalised value
+        """
+        return type(self)(self.T / np.sqrt(np.sum(self ** 2, axis=-1)))
 
     @property
     def squared_length(self):
-        return self._module.squared_length(self)
+        """
+        Calculates the squared length of a vector.
+
+        Useful when trying to avoid the performance
+        penalty of a square root operation.
+
+        :rtype: If one vector is supplied, the result with be a scalar.
+                Otherwise the result will be an array of scalars with shape
+                vec.ndim with the last dimension being size 1.
+        """
+        lengths = np.sum(self ** 2., axis=-1)
+
+        return lengths
 
     @property
     def length(self):
-        return self._module.length(self)
+        """
+        Returns the length of an Nd list of vectors
+        or a single vector.
+
+            Single vector::
+
+                numpy.array([ x, y, z ])
+
+            Nd array::
+
+                numpy.array([
+                    [x1, y1, z1],
+                    [x2, y2, z2]
+                ]).
+
+        :rtype: If a 1d array was passed, it will be a scalar.
+            Otherwise the result will be an array of scalars with shape
+            vec.ndim with the last dimension being size 1.
+        """
+        return np.sqrt(np.sum(self ** 2, axis=-1))
 
     @length.setter
     def length(self, length):
-        self[:] = fvec.set_length(self, length)
+        """
+        Resize a Nd list of vectors or a single vector to 'length'.
+
+        The vector is changed in place.
+
+            Single vector::
+                numpy.array([ x, y, z ])
+
+            Nd array::
+                numpy.array([
+                    [x1, y1, z1],
+                    [x2, y2, z2]
+                ]).
+        """
+        # calculate the length
+        # this is a duplicate of length(vec) because we
+        # always want an array, even a 0-d array.
+
+        self[:] = (self.T / np.sqrt(np.sum(self ** 2, axis=-1)) * length).T
 
     def dot(self, other):
-        return fvec.dot(self, type(self)(other))
+        """Calculates the dot product of two vectors.
+
+        :param numpy.array other: an Nd array with the final dimension
+            being size 3 (a vector)
+        :rtype: If a 1d array was passed, it will be a scalar.
+            Otherwise the result will be an array of scalars with shape
+            vec.ndim with the last dimension being size 1.
+        """
+        return np.sum(self * other, axis=-1)
 
     def cross(self, other):
-        return type(self)(fvec3.cross(self[:3], other[:3]))
+        return type(self)(np.cross(self[:3], other[:3]))
 
     def interpolate(self, other, delta):
-        return type(self)(fvec.interpolate(self, type(self)(other), delta))
+        """
+        Interpolates between 2 arrays of vectors (shape = N,3)
+        by the specified delta (0.0 <= delta <= 1.0).
 
-    def normal(self, v2, v3, normalise_result=True):
-        return type(self)(fvec3.generate_normals(self, type(self)(v2), type(self)(v3), normalise_result))
+        :param numpy.array other: an Nd array with the final dimension
+            being size 3. (a vector)
+        :param float delta: The interpolation percentage to apply,
+            where 0.0 <= delta <= 1.0.
+            When delta is 0.0, the result will be v1.
+            When delta is 1.0, the result will be v2.
+            Values inbetween will be an interpolation.
+        :rtype: A numpy.array with shape v1.shape.
+        """
+        # scale the difference based on the time
+        # we must do it this 'unreadable' way to avoid
+        # loss of precision.
+        # the 'readable' method (f_now = f_0 + (f1 - f0) * delta)
+        # causes floating point errors due to the small values used
+        # in md2 files and the values become corrupted.
+        # this horrible code curtousey of this comment:
+        # http://stackoverflow.com/questions/5448322/temporal-interpolation-in-numpy-matplotlib
+        return self + ((other - self) * delta)
+        # return v1 * (1.0 - delta ) + v2 * delta
+        t = delta
+        t0 = 0.0
+        t1 = 1.0
+        delta_t = t1 - t0
+        return (t1 - t) / delta_t * v1 + (t - t0) / delta_t * v2
 
 
 class BaseQuaternion(BaseObject):

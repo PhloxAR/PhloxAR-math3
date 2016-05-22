@@ -48,13 +48,14 @@ from numbers import Number
 import numpy as np
 from multipledispatch import dispatch
 from .basecls import BaseObject, BaseVector4, BaseMatrix4, NpProxy
-from ..funcs import fvec4
+from .vector3 import Vector3
+from ..utils import parameters_as_numpy_arrays
 
 
 # TODO: add < <= > >= == != operators
 
 class Vector4(BaseVector4):
-    _module = fvec4
+
     _shape = (4,)
 
     #: The X value of this Vector.
@@ -79,38 +80,39 @@ class Vector4(BaseVector4):
     xyw = NpProxy([0, 1, 3])
     #: The X,Z,W values of this Vector as a numpy.ndarray.
     xzw = NpProxy([0, 2, 3])
-
-    ########################
+    
     # Creation
     @classmethod
     def from_vector3(cls, vector, w=0.0, dtype=None):
-        """Create a Vector4 from a Vector3.
+        """
+        Create a Vector4 from a Vector3.
 
         By default, the W value is 0.0.
         """
-        return cls(fvec4.create_from_vector3(vector, w, dtype))
+        dtype = dtype or vector.dtype
+        v = np.array([vector[0], vector[1], vector[2], w])
+        return cls(v, dtype=dtype)
 
-    def __new__(cls, x=None, y=None, z=None, dtype=None):
-        if isinstance(x, list) and len(x) == 3:
+    def __new__(cls, x=None, y=0., z=0., w=0., dtype=None):
+        if isinstance(x, list) and len(x) == 4:
             obj = x
             if not isinstance(x, np.ndarray):
                 obj = np.array(x, dtype=dtype)
 
             # matrix4
             if obj.shape in (4, 4,) or isinstance(obj, BaseMatrix4):
-                obj = fvec4.create_from_matrix4_translation(obj, dtype=dtype)
-        elif x is not None and y is not None and z is not None:
-            obj = np.array((x, y, z), dtype)
+                obj = cls.from_matrix4_translation(obj, dtype=dtype)
+        elif x is not None:
+            obj = np.array((x, y, z, w), dtype)
 
             if obj.shape in (4, 4,) or isinstance(obj, BaseMatrix4):
-                obj = fvec4.create_from_matrix4_translation(obj, dtype=dtype)
+                obj = cls.from_matrix44_translation(obj, dtype=dtype)
         else:
             obj = np.zeros(cls._shape, dtype=dtype)
 
         obj = obj.view(cls)
         return super(Vector4, cls).__new__(cls, obj)
 
-    ########################
     # Basic Operators
     @dispatch(BaseObject)
     def __add__(self, other):
@@ -148,7 +150,6 @@ class Vector4(BaseVector4):
     def __eq__(self, other):
         self._unsupported_type('EQ', other)
 
-    ########################
     # Vectors
     @dispatch((BaseVector4, np.ndarray, list))
     def __add__(self, other):
@@ -185,8 +186,7 @@ class Vector4(BaseVector4):
     @dispatch((BaseVector4, np.ndarray, list))
     def __eq__(self, other):
         return bool(np.all(super(Vector4, self).__eq__(other)))
-
-    ########################
+    
     # Number
     @dispatch((Number, np.number))
     def __add__(self, other):
@@ -207,8 +207,7 @@ class Vector4(BaseVector4):
     @dispatch((Number, np.number))
     def __div__(self, other):
         return Vector4(super(Vector4, self).__div__(other))
-
-    ########################
+    
     # Methods and Properties
     @property
     def inverse(self):
@@ -217,11 +216,30 @@ class Vector4(BaseVector4):
         return Vector4(-self)
 
     @property
-    def vector3(self):
+    def vec3(self):
         """Returns a Vector3 and the W component as a tuple.
         """
         return Vector3(self[:3]), self[3]
 
+    # Class methods
 
-from .matrix4 import Matrix4
-from .vector3 import Vector3
+    @classmethod
+    def unit_x(cls, dtype=None):
+        return np.array([1.0, 0.0, 0.0, 0.0], dtype=dtype)
+
+    @classmethod
+    def unit_y(cls, dtype=None):
+        return np.array([0.0, 1.0, 0.0, 0.0], dtype=dtype)
+
+    @classmethod
+    def unit_z(cls, dtype=None):
+        return np.array([0.0, 0.0, 1.0, 0.0], dtype=dtype)
+
+    @classmethod
+    def unit_w(cls, dtype=None):
+        return np.array([0.0, 0.0, 0.0, 1.0], dtype=dtype)
+
+    @parameters_as_numpy_arrays('mat')
+    def from_matrix4_translation(self, mat, dtype=None):
+        return np.array(mat[:4, 3], dtype=dtype)
+
