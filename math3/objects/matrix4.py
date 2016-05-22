@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Represents a 4x4 Matrix.
+"""
+Represents a 4x4 Matrix.
 
 The Matrix4 class provides a number of convenient functions and
 conversions.

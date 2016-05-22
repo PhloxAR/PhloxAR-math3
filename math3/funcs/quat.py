@@ -3,9 +3,9 @@
 """
 from __future__ import absolute_import, division, print_function
 import numpy as np
-from math3 import vector, vector3, vector4
-from math3.utils import all_parameters_as_numpy_arrays, \
-    parameters_as_numpy_arrays
+from ..funcs import vec, vec4, euler
+from ..utils import all_parameters_as_numpy_arrays, parameters_as_numpy_arrays
+
 
 
 class index:
@@ -73,7 +73,7 @@ def create_from_axis_rotation(axis, theta, dtype=None):
     dtype = dtype or axis.dtype
     # make sure the vector is normalised
     if not np.isclose(np.linalg.norm(axis), 1.):
-        axis = vector.normalise(axis)
+        axis = vec.normalise(axis)
 
     thetaOver2 = theta * 0.5
     sinThetaOver2 = np.sin(thetaOver2)
@@ -247,7 +247,7 @@ def is_non_zero_length(quat):
 def squared_length(quat):
     """Calculates the squared length of a quaternion.
 
-    Useful for avoiding the performanc penalty of
+    Useful for avoiding the performance penalty of
     the square root function.
 
     :param numpy.array quat: The quaternion to measure.
@@ -256,7 +256,7 @@ def squared_length(quat):
         Otherwise the result will be an array of scalars with shape
         vec.ndim with the last dimension being size 1.
     """
-    return vector4.squared_length(quat)
+    return vec4.squared_length(quat)
 
 
 def length(quat):
@@ -268,7 +268,7 @@ def length(quat):
         Otherwise the result will be an array of scalars with shape
         vec.ndim with the last dimension being size 1.
     """
-    return vector4.length(quat)
+    return vec4.length(quat)
 
 
 def normalise(quat):
@@ -280,7 +280,7 @@ def normalise(quat):
     :rtype: numpy.array
     :return: The normalised quaternion(s).
     """
-    return vector4.normalise(quat)
+    return vec4.normalise(quat)
 
 
 def rotation_angle(quat):
@@ -338,7 +338,7 @@ def dot(quat1, quat2):
         Otherwise the result will be an array of scalars with shape
         vec.ndim with the last dimension being size 1.
     """
-    return vector4.dot(quat1, quat2)
+    return vec4.dot(quat1, quat2)
 
 
 @all_parameters_as_numpy_arrays
@@ -449,8 +449,8 @@ def apply_to_vector(quat, vec):
             vector.cross(quat[:-1], v) + (quat[-1] * v)
            )
         """
-        length = vector.length(vec4)
-        vec4[:] = vector.normalise(vec4)
+        length = vec.length(vec4)
+        vec4[:] = vec.normalise(vec4)
 
         # quat * vec * quat^-1
         result = cross(quat, cross(vec4, conjugate(quat)))

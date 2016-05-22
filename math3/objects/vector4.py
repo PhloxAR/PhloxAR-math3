@@ -48,13 +48,13 @@ from numbers import Number
 import numpy as np
 from multipledispatch import dispatch
 from .base import BaseObject, BaseVector4, BaseMatrix4, NpProxy
-from .. import vector4
+from ..funcs import vec4
 
 
 # TODO: add < <= > >= == != operators
 
 class Vector4(BaseVector4):
-    _module = vector4
+    _module = vec4
     _shape = (4,)
 
     #: The X value of this Vector.
@@ -88,7 +88,7 @@ class Vector4(BaseVector4):
 
         By default, the W value is 0.0.
         """
-        return cls(vector4.create_from_vector3(vector, w, dtype))
+        return cls(vec4.create_from_vector3(vector, w, dtype))
 
     def __new__(cls, value=None, dtype=None):
         if value is not None:
@@ -98,7 +98,7 @@ class Vector4(BaseVector4):
 
             # matrix44
             if obj.shape in ((4, 4,)) or isinstance(obj, BaseMatrix4):
-                obj = vector4.create_from_matrix44_translation(obj, dtype=dtype)
+                obj = vec4.create_from_matrix44_translation(obj, dtype=dtype)
         else:
             obj = np.zeros(cls._shape, dtype=dtype)
         obj = obj.view(cls)

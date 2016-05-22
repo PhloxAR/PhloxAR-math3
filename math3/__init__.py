@@ -14,8 +14,6 @@ from .objects import (
     Vector4,
 )
 
-from . import funcs, objects
-
 vec3 = Vector3
 vec4 = Vector4
 quat = Quaternion
@@ -32,7 +30,5 @@ __all__ = [
     'mat3',
     'vec3',
     'vec4',
-    'funcs',
-    'objects'
 ]
 

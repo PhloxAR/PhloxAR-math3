@@ -45,12 +45,13 @@ from numbers import Number
 import numpy as np
 from multipledispatch import dispatch
 from .base import BaseObject, BaseVector3, BaseMatrix4, NpProxy
-from .. import vector3
+from ..funcs import vec3
+
 
 # TODO: add < <= > >= == != operators
 
 class Vector3(BaseVector3):
-    _module = vector3
+    _module = vec3
     _shape = (3,)
 
     #: The X value of this Vector.
@@ -60,11 +61,11 @@ class Vector3(BaseVector3):
     #: The Z value of this Vector.
     z = NpProxy(2)
     #: The X,Y values of this Vector as a numpy.ndarray.
-    xy = NpProxy([0,1])
+    xy = NpProxy([0, 1])
     #: The X,Y,Z values of this Vector as a numpy.ndarray.
-    xyz = NpProxy([0,1,2])
+    xyz = NpProxy([0, 1, 2])
     #: The X,Z values of this Vector as a numpy.ndarray.
-    xz = NpProxy([0,2])
+    xz = NpProxy([0, 2])
 
     ########################
     # Creation
@@ -74,7 +75,7 @@ class Vector3(BaseVector3):
 
         Returns the Vector3 and the W component as a tuple.
         """
-        vec, w = vector3.create_from_vector4(vector, dtype)
+        vec, w = vec3.create_from_vector4(vector, dtype)
         return (cls(vec), w)
 
     def __new__(cls, value=None, w=0.0, dtype=None):
@@ -84,8 +85,8 @@ class Vector3(BaseVector3):
                 obj = np.array(value, dtype=dtype)
 
             # matrix44
-            if obj.shape in ((4,4,)) or isinstance(obj, BaseMatrix4):
-                obj = vector3.create_from_matrix44_translation(obj, dtype=dtype)
+            if obj.shape in ((4, 4,)) or isinstance(obj, BaseMatrix4):
+                obj = vec3.create_from_matrix44_translation(obj, dtype=dtype)
         else:
             obj = np.zeros(cls._shape, dtype=dtype)
         obj = obj.view(cls)
@@ -169,23 +170,23 @@ class Vector3(BaseVector3):
 
     ########################
     # Number
-    @dispatch((Number,np.number))
+    @dispatch((Number, np.number))
     def __add__(self, other):
         return Vector3(super(Vector3, self).__add__(other))
 
-    @dispatch((Number,np.number))
+    @dispatch((Number, np.number))
     def __sub__(self, other):
         return Vector3(super(Vector3, self).__sub__(other))
 
-    @dispatch((Number,np.number))
+    @dispatch((Number, np.number))
     def __mul__(self, other):
         return Vector3(super(Vector3, self).__mul__(other))
 
-    @dispatch((Number,np.number))
+    @dispatch((Number, np.number))
     def __truediv__(self, other):
         return Vector3(super(Vector3, self).__truediv__(other))
 
-    @dispatch((Number,np.number))
+    @dispatch((Number, np.number))
     def __div__(self, other):
         return Vector3(super(Vector3, self).__div__(other))
 
@@ -198,5 +199,5 @@ class Vector3(BaseVector3):
         return Vector3(-self)
 
     @property
-    def vector3(self):
+    def vec3(self):
         return self

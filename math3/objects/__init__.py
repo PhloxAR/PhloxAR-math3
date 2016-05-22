@@ -2,7 +2,7 @@
 from __future__ import division, print_function
 from __future__ import absolute_import, unicode_literals
 
-from . import base, matrix3, matrix4, quaternion, vector3, vector4
+# from . import base, matrix3, matrix4, quaternion, vector3, vector4
 from .matrix3 import Matrix3
 from .matrix4 import Matrix4
 from .quaternion import Quaternion
@@ -16,5 +16,10 @@ __all__ = [
     'quaternion',
     'vector3',
     'vector4',
+    'Vector4',
+    'Vector3',
+    'Matrix3',
+    'Matrix4',
+    'Quaternion'
 ]
 

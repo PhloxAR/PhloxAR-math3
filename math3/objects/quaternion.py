@@ -56,11 +56,11 @@ from __future__ import absolute_import
 import numpy as np
 from multipledispatch import dispatch
 from .base import BaseObject, BaseQuaternion, BaseMatrix, BaseVector, NpProxy
-from .. import quaternion
+from ..funcs import quat
 
 
 class Quaternion(BaseQuaternion):
-    _module = quaternion
+    _module = quat
     _shape = (4,)
 
     #: The X value of this Quaternion.
@@ -92,43 +92,43 @@ class Quaternion(BaseQuaternion):
     def from_x_rotation(cls, theta, dtype=None):
         """Creates a new Quaternion with a rotation around the X-axis.
         """
-        return cls(quaternion.create_from_x_rotation(theta, dtype))
+        return cls(quat.create_from_x_rotation(theta, dtype))
 
     @classmethod
     def from_y_rotation(cls, theta, dtype=None):
         """Creates a new Quaternion with a rotation around the Y-axis.
         """
-        return cls(quaternion.create_from_y_rotation(theta, dtype))
+        return cls(quat.create_from_y_rotation(theta, dtype))
 
     @classmethod
     def from_z_rotation(cls, theta, dtype=None):
         """Creates a new Quaternion with a rotation around the Z-axis.
         """
-        return cls(quaternion.create_from_z_rotation(theta, dtype))
+        return cls(quat.create_from_z_rotation(theta, dtype))
 
     @classmethod
     def from_axis_rotation(cls, axis, theta, dtype=None):
         """Creates a new Quaternion with a rotation around the specified axis.
         """
-        return cls(quaternion.create_from_axis_rotation(axis, theta, dtype))
+        return cls(quat.create_from_axis_rotation(axis, theta, dtype))
 
     @classmethod
     def from_matrix(cls, matrix, dtype=None):
         """Creates a Quaternion from the specified Matrix (Matrix3 or Matrix4).
         """
-        return cls(quaternion.create_from_matrix(matrix, dtype))
+        return cls(quat.create_from_matrix(matrix, dtype))
 
     @classmethod
     def from_eulers(cls, eulers, dtype=None):
         """Creates a Quaternion from the specified Euler angles.
         """
-        return cls(quaternion.create_from_eulers(eulers, dtype))
+        return cls(quat.create_from_eulers(eulers, dtype))
 
     @classmethod
     def from_inverse_of_eulers(cls, eulers, dtype=None):
         """Creates a Quaternion from the inverse of the specified Euler angles.
         """
-        return cls(quaternion.create_from_inverse_of_eulers(eulers, dtype))
+        return cls(quat.create_from_inverse_of_eulers(eulers, dtype))
 
     def __new__(cls, value=None, dtype=None):
         if value is not None:
@@ -139,9 +139,9 @@ class Quaternion(BaseQuaternion):
             # matrix33, matrix44
             if obj.shape in ((4, 4,), (3, 3,)) or isinstance(obj, (
                     Matrix3, Matrix4)):
-                obj = quaternion.create_from_matrix(obj, dtype=dtype)
+                obj = quat.create_from_matrix(obj, dtype=dtype)
         else:
-            obj = quaternion.create(dtype=dtype)
+            obj = quat.create(dtype=dtype)
         obj = obj.view(cls)
         return super(Quaternion, cls).__new__(cls, obj)
 
@@ -194,7 +194,7 @@ class Quaternion(BaseQuaternion):
     # Vectors
     @dispatch(BaseVector)
     def __mul__(self, other):
-        return type(other)(quaternion.apply_to_vector(self, other))
+        return type(other)(quat.apply_to_vector(self, other))
 
     ########################
     # Methods and Properties
@@ -202,42 +202,42 @@ class Quaternion(BaseQuaternion):
     def length(self):
         """Returns the length of this Quaternion.
         """
-        return quaternion.length(self)
+        return quat.length(self)
 
     def normalise(self):
         """Normalises this Quaternion in-place.
         """
-        self[:] = quaternion.normalise(self)
+        self[:] = quat.normalise(self)
 
     @property
     def normalised(self):
         """Returns a normalised version of this Quaternion as a new Quaternion.
         """
-        return Quaternion(quaternion.normalise(self))
+        return Quaternion(quat.normalise(self))
 
     @property
     def angle(self):
         """Returns the angle around the axis of rotation of this Quaternion as a float.
         """
-        return quaternion.rotation_angle(self)
+        return quat.rotation_angle(self)
 
     @property
     def axis(self):
         """Returns the axis of rotation of this Quaternion as a Vector3.
         """
-        return Vector3(quaternion.rotation_axis(self))
+        return Vector3(quat.rotation_axis(self))
 
     def cross(self, other):
         """Returns the cross of this Quaternion and another.
 
         This is the equivalent of combining Quaternion rotations (like Matrix multiplication).
         """
-        return Quaternion(quaternion.cross(self, other))
+        return Quaternion(quat.cross(self, other))
 
     def dot(self, other):
         """Returns the dot of this Quaternion and another.
         """
-        return quaternion.dot(self, other)
+        return quat.dot(self, other)
 
     @property
     def conjugate(self):
@@ -245,30 +245,30 @@ class Quaternion(BaseQuaternion):
 
         This is a Quaternion with the opposite rotation.
         """
-        return Quaternion(quaternion.conjugate(self))
+        return Quaternion(quat.conjugate(self))
 
     @property
     def inverse(self):
         """Returns the inverse of this quaternion.
         """
-        return Quaternion(quaternion.inverse(self))
+        return Quaternion(quat.inverse(self))
 
     def power(self, exponent):
         """Returns a new Quaternion representing this Quaternion to the power of the exponent.
         """
-        return Quaternion(quaternion.power(self, exponent))
+        return Quaternion(quat.power(self, exponent))
 
     @property
     def negative(self):
         """Returns the negative of the Quaternion.
         """
-        return Quaternion(quaternion.negate(self))
+        return Quaternion(quat.negate(self))
 
     @property
     def is_identity(self):
         """Returns True if the Quaternion has no rotation (0.,0.,0.,1.).
         """
-        return quaternion.is_identity(self)
+        return quat.is_identity(self)
 
     @property
     def matrix44(self):
