@@ -62,11 +62,13 @@ from numbers import Number
 import numpy as np
 from multipledispatch import dispatch
 from .basecls import BaseObject, BaseMatrix, BaseMatrix4, BaseQuaternion, BaseVector, NpProxy
-from ..funcs import fmat4
+from ..utils import parameters_as_numpy_arrays
+from .matrix3 import Matrix3
+from .quaternion import Quaternion
 
 
 class Matrix4(BaseMatrix4):
-    _module = fmat4
+
     _shape = (4, 4,)
 
     # m<c> style access
@@ -137,33 +139,157 @@ class Matrix4(BaseMatrix4):
     # Creation
     @classmethod
     def from_matrix3(cls, matrix, dtype=None):
-        """Creates a Matrix4 from a Matrix33.
         """
-        return cls(fmat4.create_from_matrix3(matrix, dtype))
+        Creates a Matrix4 from a Matrix3.
+
+        The translation will be 0,0,0.
+
+        :rtype: numpy.array
+        :return: A matrix with shape (4,4) with the input matrix rotation.
+        """
+        mat4 = np.identity(4, dtype=dtype)
+        mat4[0:3, 0:3] = matrix
+
+        return cls(mat4)
 
     @classmethod
     def perspective_projection(cls, fovy, aspect, near, far, dtype=None):
-        """Creates a Matrix4 for use as a perspective projection matrix.
         """
-        return cls(fmat4.create_perspective_projection_matrix(fovy, aspect, near, far, dtype))
+        Creates perspective projection matrix.
+
+        .. seealso:: http://www.opengl.org/sdk/docs/man2/xhtml/gluPerspective.xml
+        .. seealso:: http://www.geeks3d.com/20090729/howto-perspective-projection-matrix-in-opengl/
+
+        :param float fovy: field of view in y direction in degrees
+        :param float aspect: aspect ratio of the view (width / height)
+        :param float near: distance from the viewer to the near clipping plane (only positive)
+        :param float far: distance from the viewer to the far clipping plane (only positive)
+        :rtype: numpy.array
+        :return: A projection matrix representing the specified perspective.
+        """
+        ymax = near * np.tan(fovy * np.pi / 360.0)
+        xmax = ymax * aspect
+        return cls.create_perspective_projection_matrix_from_bounds(-xmax, xmax,
+                                                                    -ymax, ymax,
+                                                                    near, far)
 
     @classmethod
     def perspective_projection_bounds(cls, left, right, top, bottom, near, far, dtype=None):
-        """Creates a Matrix4 for use as a perspective projection matrix.
         """
-        return cls(fmat4.create_perspective_projection_matrix_from_bounds(left, right, top, bottom, near, far, dtype))
+        Creates a perspective projection matrix using the specified near
+        plane dimensions.
+
+        :param float left: The left of the near plane relative to the plane's centre.
+        :param float right: The right of the near plane relative to the plane's centre.
+        :param float top: The top of the near plane relative to the plane's centre.
+        :param float bottom: The bottom of the near plane relative to the plane's centre.
+        :param float near: The distance of the near plane from the camera's origin.
+            It is recommended that the near plane is set to 1.0 or above to avoid rendering issues
+            at close range.
+        :param float far: The distance of the far plane from the camera's origin.
+        :rtype: numpy.array
+        :return: A projection matrix representing the specified perspective.
+
+        .. seealso:: http://www.gamedev.net/topic/264248-building-a-projection-matrix-without-api/
+        .. seealso:: http://www.glprogramming.com/red/chapter03.html
+        """
+
+        """
+        E 0 A 0
+        0 F B 0
+        0 0 C D
+        0 0-1 0
+
+        A = (right+left)/(right-left)
+        B = (top+bottom)/(top-bottom)
+        C = -(far+near)/(far-near)
+        D = -2*far*near/(far-near)
+        E = 2*near/(right-left)
+        F = 2*near/(top-bottom)
+        """
+        A = (right + left) / (right - left)
+        B = (top + bottom) / (top - bottom)
+        C = -(far + near) / (far - near)
+        D = -2. * far * near / (far - near)
+        E = 2. * near / (right - left)
+        F = 2. * near / (top - bottom)
+
+        mat = np.array((
+            (E, 0., 0., 0.),
+            (0., F, 0., 0.),
+            (A, B, C, -1.),
+            (0., 0., D, 0.),
+        ), dtype=dtype)
+
+        return cls(mat)
 
     @classmethod
     def orthogonal_projection(cls, left, right, top, bottom, near, far, dtype=None):
-        """Creates a Matrix4 for use as an orthogonal projection matrix.
         """
-        return cls(fmat4.create_orthogonal_projection_matrix(left, right, top, bottom, near, far, dtype))
+        Creates an orthogonal projection matrix.
+
+        :param float left: The left of the near plane relative to the plane's centre.
+        :param float right: The right of the near plane relative to the plane's centre.
+        :param float top: The top of the near plane relative to the plane's centre.
+        :param float bottom: The bottom of the near plane relative to the plane's centre.
+        :param float near: The distance of the near plane from the camera's origin.
+            It is recommended that the near plane is set to 1.0 or above to avoid rendering issues
+            at close range.
+        :param float far: The distance of the far plane from the camera's origin.
+        :rtype: numpy.array
+        :return: A projection matrix representing the specified orthogonal perspective.
+
+        .. seealso:: http://msdn.microsoft.com/en-us/library/dd373965(v=vs.85).aspx
+        """
+
+        """
+        A 0 0 Tx
+        0 B 0 Ty
+        0 0 C Tz
+        0 0 0 1
+
+        A = 2 / (right - left)
+        B = 2 / (top - bottom)
+        C = -2 / (far - near)
+
+        Tx = (right + left) / (right - left)
+        Ty = (top + bottom) / (top - bottom)
+        Tz = (far + near) / (far - near)
+        """
+        rml = right - left
+        tmb = top - bottom
+        fmn = far - near
+
+        A = 2. / rml
+        B = 2. / tmb
+        C = -2. / fmn
+        Tx = -(right + left) / rml
+        Ty = -(top + bottom) / tmb
+        Tz = -(far + near) / fmn
+
+        mat = np.array((
+            (A, 0., 0., 0.),
+            (0., B, 0., 0.),
+            (0., 0., C, 0.),
+            (Tx, Ty, Tz, 1.),
+        ), dtype=dtype)
+
+        return cls(mat)
 
     @classmethod
-    def from_translation(cls, translation, dtype=None):
-        """Creates a Matrix4 from the specified translation.
+    @parameters_as_numpy_arrays('vec')
+    def from_translation(cls, vec, dtype=None):
+        """Creates an identity matrix with the translation set.
+
+        :param numpy.array vec: The translation vector (shape 3 or 4).
+        :rtype: numpy.array
+        :return: A matrix with shape (4,4) that represents a matrix
+            with the translation set to the specified vector.
         """
-        return cls(fmat4.create_from_translation(translation, dtype=dtype))
+        dtype = dtype or vec.dtype
+        mat = cls.identity(dtype)
+        mat[:3, 3] = vec[:3]
+        return mat
 
     def __new__(cls, value=None, dtype=None):
         if value is not None:
@@ -173,10 +299,10 @@ class Matrix4(BaseMatrix4):
 
             # matrix3
             if obj.shape == (3,3) or isinstance(obj, Matrix3):
-                obj = fmat4.create_from_matrix3(obj, dtype=dtype)
+                obj = Matrix4.from_matrix3(obj, dtype=dtype)
             # quaternion
             elif obj.shape == (4,) or isinstance(obj, Quaternion):
-                obj = fmat4.create_from_quaternion(obj, dtype=dtype)
+                obj = Matrix4.from_quaternion(obj, dtype=dtype)
         else:
             obj = np.zeros(cls._shape, dtype=dtype)
         obj = obj.view(cls)
@@ -219,7 +345,7 @@ class Matrix4(BaseMatrix4):
 
     @dispatch((BaseMatrix, np.ndarray, list))
     def __mul__(self, other):
-        return Matrix4(fmat4.multiply(self, Matrix4(other)))
+        return self.multiply(Matrix4(other))
 
     ########################
     # Quaternions
@@ -232,7 +358,7 @@ class Matrix4(BaseMatrix4):
     # Vectors
     @dispatch(BaseVector)
     def __mul__(self, other):
-        return type(other)(fmat4.apply_to_vector(self, other))
+        return type(other)(self.apply_to_vector(other))
 
     ########################
     # Number
@@ -259,7 +385,7 @@ class Matrix4(BaseMatrix4):
     ########################
     # Methods and Properties
     @property
-    def matrix3(self):
+    def mat3(self):
         """Returns a Matrix33 representing this matrix.
         """
         return Matrix3(self)
@@ -274,10 +400,223 @@ class Matrix4(BaseMatrix4):
         return self
 
     @property
-    def quaternion(self):
+    def quat(self):
         """Returns a Quaternion representing this matrix.
         """
         return Quaternion(self)
 
-from .matrix3 import Matrix3
-from .quaternion import Quaternion
+    # Class method
+    @classmethod
+    def identity(cls, dtype=None):
+        """
+        Creates a new matrix44 and sets it to an identity matrix.
+
+        :rtype: numpy.array
+        :return: A matrix representing an identity matrix with shape (4,4).
+        """
+        return cls(np.identity(4, dtype=dtype))
+
+    @classmethod
+    def from_euler(cls, euler, dtype=None):
+        """
+        Creates a matrix from the specified Euler rotations.
+
+        :param numpy.array euler: A set of euler rotations in the format
+            specified by the euler modules.
+        :rtype: numpy.array
+        :return: A matrix with shape (4,4) with the euler's rotation.
+        """
+        dtype = dtype or euler.dtype
+        # set to identity matrix
+        # this will populate our extra rows for us
+        mat = cls.identity(dtype)
+
+        # we'll use Matrix33 for our conversion
+        mat[0:3, 0:3] = Matrix3.from_euler(euler, dtype)
+        return cls(mat)
+
+    @classmethod
+    def from_quaternion(cls, quaternion, dtype=None):
+        """
+        Creates a matrix with the same rotation as a quaternion.
+
+        :param quaternion: The quaternion to create the matrix from.
+        :rtype: numpy.array
+        :return: A matrix with shape (4,4) with the quaternion's rotation.
+        """
+        dtype = dtype or quaternion.dtype
+        # set to identity matrix
+        # this will populate our extra rows for us
+        mat = cls.identity(dtype)
+
+        # we'll use Matrix33 for our conversion
+        mat[0:3, 0:3] = Matrix3.from_quaternion(quaternion, dtype)
+
+        return cls(mat)
+
+    @classmethod
+    def from_inverse_of_quaternion(cls, quaternion, dtype=None):
+        """
+        Creates a matrix with the inverse rotation of a quaternion.
+
+        This can be used to go from object space to intertial space.
+
+        :param numpy.array quat: The quaternion to make the matrix from (shape 4).
+        :rtype: numpy.array
+        :return: A matrix with shape (4,4) that respresents the inverse of
+        the quaternion.
+        """
+        dtype = dtype or quaternion.dtype
+        # set to identity matrix
+        # this will populate our extra rows for us
+        mat = cls.identity(dtype)
+
+        # we'll use Matrix33 for our conversion
+        mat[0:3, 0:3] = Matrix3.from_inverse_of_quaternion(quaternion, dtype)
+
+        return cls(mat)
+
+    @classmethod
+    def from_scale(cls, scale, dtype=None):
+        """
+        Creates an identity matrix with the scale set.
+
+        :param numpy.array scale: The scale to apply as a vector (shape 3).
+        :rtype: numpy.array
+        :return: A matrix with shape (4,4) with the scale
+            set to the specified vector.
+        """
+        # we need to expand 'scale' into it's components
+        # because numpy isn't flattening them properly.
+        m = np.diagflat([scale[0], scale[1], scale[2], 1.0])
+
+        if dtype:
+            m = m.astype(dtype)
+
+        return cls(m)
+
+    @classmethod
+    def from_x_rotation(cls, theta, dtype=None):
+        """
+        Creates a matrix with the specified rotation about the X axis.
+
+        :param float theta: The rotation, in radians, about the X-axis.
+        :rtype: numpy.array
+        :return: A matrix with the shape (4,4) with the specified rotation about
+             the X-axis.
+
+        .. seealso:: http://en.wikipedia.org/wiki/Rotation_matrix#In_three_dimensions
+        """
+        mat = cls.identity(dtype)
+        mat[0:3, 0:3] = Matrix3.from_x_rotation(theta, dtype)
+
+        return cls(mat)
+
+    @classmethod
+    def from_y_rotation(cls, theta, dtype=None):
+        """
+        Creates a matrix with the specified rotation about the Y axis.
+
+        :param float theta: The rotation, in radians, about the Y-axis.
+        :rtype: numpy.array
+        :return: A matrix with the shape (4,4) with the specified rotation about
+                the Y-axis.
+
+        .. seealso:: http://en.wikipedia.org/wiki/Rotation_matrix#In_three_dimensions
+        """
+        mat = cls.identity(dtype)
+        mat[0:3, 0:3] = Matrix3.from_y_rotation(theta, dtype)
+
+        return cls(mat)
+
+    @classmethod
+    def from_z_rotation(cls, theta, dtype=None):
+        """
+        Creates a matrix with the specified rotation about the Z axis.
+
+        :param float theta: The rotation, in radians, about the Z-axis.
+        :rtype: numpy.array
+        :return: A matrix with the shape (4,4) with the specified rotation about
+                the Z-axis.
+
+        .. seealso:: http://en.wikipedia.org/wiki/Rotation_matrix#In_three_dimensions
+        """
+        mat = cls.identity(dtype)
+        mat[0:3, 0:3] = Matrix3.create_from_z_rotation(theta, dtype)
+
+        return cls(mat)
+
+    @classmethod
+    def from_axis_rotation(cls, axis, theta, dtype=None):
+        """Creates a matrix from the specified rotation theta around an axis.
+
+        :param numpy.array axis: A (3,) vector.
+        :param float theta: A rotation in radians.
+
+        :rtype: numpy.array
+        :return: A matrix with shape (4,4).
+        """
+        dtype = dtype or axis.dtype
+        # set to identity matrix
+        # this will populate our extra rows for us
+        mat = cls.identity(dtype)
+
+        # we'll use Matrix33 for our conversion
+        mat[0:3, 0:3] = Matrix3.from_axis_rotation(axis, theta, dtype)
+
+        return cls(mat)
+
+    def apply_to_vector(self, vec):
+        """Apply a matrix to a vector.
+
+        The matrix's rotation and translation are applied to the vector.
+        Supports multiple matrices and vectors.
+
+        :param numpy.array mat: The rotation / translation matrix.
+            Can be a list of matrices.
+        :param numpy.array vec: The vector to modify.
+            Can be a list of vectors.
+        :rtype: numpy.array
+        :return: The vectors rotated by the specified matrix.
+        """
+        if vec.size == 3:
+            # convert to a vec4
+            vec4 = np.array([vec[0], vec[1], vec[2], 1.], dtype=vec.dtype)
+            vec4 = np.dot(self, vec4)
+            if np.allclose(vec4[3], 0.):
+                vec4[:] = [np.inf, np.inf, np.inf, np.inf]
+            else:
+                vec4 /= vec4[3]
+            return vec4[:3]
+        elif vec.size == 4:
+            return np.dot(self, vec)
+        else:
+            raise ValueError("Vector size unsupported")
+
+    def multiply(self, mat):
+        """
+        Multiply two matricies, m1 . m2.
+
+        This is essentially a wrapper around
+        numpy.dot(m1, m2)
+
+        :param numpy.array mat: The second matrix.
+        :rtype: numpy.array
+        :return: A matrix that results from multiplying m1 by m2.
+        """
+        return np.dot(self, mat)
+
+    @property
+    def inverse(self):
+        """
+        Returns the inverse of the matrix.
+
+        This is essentially a wrapper around numpy.linalg.inv.
+
+        :param numpy.array m: A matrix.
+        :rtype: numpy.array
+        :return: The inverse of the specified matrix.
+
+        .. seealso:: http://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.inv.html
+        """
+        return np.linalg.inv(self)

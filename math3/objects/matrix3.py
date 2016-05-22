@@ -134,7 +134,7 @@ class Matrix3(BaseMatrix3):
 
             # matrix4
             if obj.shape == (4, 4) or isinstance(obj, Matrix4):
-                obj = cls.create_from_matrix4(obj, dtype=dtype)
+                obj = cls.from_matrix4(obj, dtype=dtype)
             # quaternion
             elif obj.shape == (4,) or isinstance(obj, Quaternion):
                 obj = cls.from_quaternion(obj, dtype=dtype)
@@ -378,7 +378,7 @@ class Matrix3(BaseMatrix3):
 
         :param numpy.array quaternion: The quaternion to make the matrix from (shape 4).
         :rtype: numpy.array
-        :return: A matrix with shape (3,3) that respresents the inverse of
+        :return: A matrix with shape (3,3) that represents the inverse of
             the quaternion.
         """
         dtype = dtype or quaternion.dtype

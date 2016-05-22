@@ -67,3 +67,16 @@ def cross(v1, v2):
     """
     return np.cross(v1, v2)
 
+
+def matrix3_view(mat):
+    """
+    Returns a view into the matrix in Matrix3 format.
+
+    This is different from Matrix3.from_matrix4, in that
+    changes to the returned matrix will also alter the original matrix.
+
+    :rtype: numpy.array
+    :return: A view into the matrix in the format of a matrix3 (shape (3,3)).
+    """
+    return mat[0:3, 0:3]
+
