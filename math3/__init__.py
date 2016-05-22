@@ -12,14 +12,15 @@ from .objects import (
     Quaternion,
     Vector3,
     Vector4,
-    vec3,
-    vec4,
-    mat3,
-    mat4,
-    quat
 )
 
 from . import funcs, objects
+
+vec3 = Vector3
+vec4 = Vector4
+quat = Quaternion
+mat3 = Matrix3
+mat4 = Matrix4
 
 __all__ = [
     'Vector3',

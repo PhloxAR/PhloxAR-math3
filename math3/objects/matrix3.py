@@ -16,7 +16,7 @@ conversions.
 
     # explicit creation
     m = Matrix3.identity()
-    m = Matrix3.from_matrix44(Matrix4())
+    m = Matrix3.from_matrix4(Matrix4())
 
     # inferred conversions
     m = Matrix3(Quaternion())
@@ -30,7 +30,7 @@ conversions.
     q = m.quaternion
 
     # convert from quaternion back to matrix
-    m = q.matrix33
+    m = q.mat3
     m = Matrix3(q)
 
     # rotate a matrix by a quaternion
@@ -63,11 +63,11 @@ import numpy as np
 from multipledispatch import dispatch
 from .base import BaseObject, BaseMatrix, BaseMatrix3, BaseQuaternion, \
     BaseVector, NpProxy
-from .. import matrix33
+from ..funcs import mat4, mat3
 
 
 class Matrix3(BaseMatrix3):
-    _module = matrix33
+    _module = mat4
     _shape = (3, 3,)
 
     # m<c> style access
@@ -117,12 +117,12 @@ class Matrix3(BaseMatrix3):
     ########################
     # Creation
     @classmethod
-    def from_matrix44(cls, matrix, dtype=None):
+    def from_matrix4(cls, matrix, dtype=None):
         """Creates a Matrix3 from a Matrix4.
 
         The Matrix4 translation will be lost.
         """
-        return cls(matrix33.create_from_matrix44(matrix, dtype))
+        return cls(mat3.create_from_matrix4(matrix, dtype))
 
     def __new__(cls, value=None, dtype=None):
         if value is not None:
@@ -130,12 +130,12 @@ class Matrix3(BaseMatrix3):
             if not isinstance(value, np.ndarray):
                 obj = np.array(value, dtype=dtype)
 
-            # matrix44
+            # matrix4
             if obj.shape == (4, 4) or isinstance(obj, Matrix4):
-                obj = matrix33.create_from_matrix44(obj, dtype=dtype)
+                obj = mat3.create_from_matrix4(obj, dtype=dtype)
             # quaternion
             elif obj.shape == (4,) or isinstance(obj, Quaternion):
-                obj = matrix33.create_from_quaternion(obj, dtype=dtype)
+                obj = mat3.create_from_quaternion(obj, dtype=dtype)
         else:
             obj = np.zeros(cls._shape, dtype=dtype)
         obj = obj.view(cls)
@@ -179,20 +179,20 @@ class Matrix3(BaseMatrix3):
 
     @dispatch((BaseMatrix, np.ndarray, list))
     def __mul__(self, other):
-        return Matrix3(matrix33.multiply(self, Matrix3(other)))
+        return Matrix3(mat3.multiply(self, Matrix3(other)))
 
     ########################
     # Quaternions
     @dispatch(BaseQuaternion)
     def __mul__(self, other):
-        m = other.matrix33
+        m = other.mat3
         return self * m
 
     ########################
     # Vectors
     @dispatch(BaseVector)
     def __mul__(self, other):
-        return type(other)(matrix33.apply_to_vector(self, other))
+        return type(other)(mat3.apply_to_vector(self, other))
 
     ########################
     # Number
@@ -219,7 +219,7 @@ class Matrix3(BaseMatrix3):
     ########################
     # Methods and Properties
     @property
-    def matrix33(self):
+    def mat3(self):
         """Returns the Matrix3.
 
         This can be handy if you're not sure what type of Matrix class you have
@@ -228,7 +228,7 @@ class Matrix3(BaseMatrix3):
         return self
 
     @property
-    def matrix44(self):
+    def matrix4(self):
         """Returns a Matrix4 representing this matrix.
         """
         return Matrix4(self)

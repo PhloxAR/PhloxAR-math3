@@ -9,7 +9,7 @@ numpy.array.T method.
 """
 from __future__ import absolute_import, division, print_function
 import numpy as np
-from math3 import matrix33
+from . import mat3
 from math3.utils import all_parameters_as_numpy_arrays, \
     parameters_as_numpy_arrays
 
@@ -24,7 +24,7 @@ def create_identity(dtype=None):
     return np.identity(4, dtype=dtype)
 
 
-def create_from_matrix33(mat, dtype=None):
+def create_from_matrix3(mat, dtype=None):
     """Creates a Matrix44 from a Matrix33.
 
     The translation will be 0,0,0.
@@ -37,14 +37,14 @@ def create_from_matrix33(mat, dtype=None):
     return mat4
 
 
-def create_matrix33_view(mat):
+def create_matrix3_view(mat):
     """Returns a view into the matrix in Matrix33 format.
 
-    This is different from matrix33.create_from_matrix44, in that
+    This is different from matrix3.create_from_matrix44, in that
     changes to the returned matrix will also alter the original matrix.
 
     :rtype: numpy.array
-    :return: A view into the matrix in the format of a matrix33 (shape (3,3)).
+    :return: A view into the matrix in the format of a matrix3 (shape (3,3)).
     """
     return mat[0:3, 0:3]
 
@@ -64,7 +64,7 @@ def create_from_eulers(eulers, dtype=None):
     mat = create_identity(dtype)
 
     # we'll use Matrix33 for our conversion
-    mat[0:3, 0:3] = matrix33.create_from_eulers(eulers, dtype)
+    mat[0:3, 0:3] = mat3.create_from_eulers(eulers, dtype)
     return mat
 
 
@@ -84,7 +84,7 @@ def create_from_axis_rotation(axis, theta, dtype=None):
     mat = create_identity(dtype)
 
     # we'll use Matrix33 for our conversion
-    mat[0:3, 0:3] = matrix33.create_from_axis_rotation(axis, theta, dtype)
+    mat[0:3, 0:3] = mat3.create_from_axis_rotation(axis, theta, dtype)
     return mat
 
 
@@ -102,7 +102,7 @@ def create_from_quaternion(quat, dtype=None):
     mat = create_identity(dtype)
 
     # we'll use Matrix33 for our conversion
-    mat[0:3, 0:3] = matrix33.create_from_quaternion(quat, dtype)
+    mat[0:3, 0:3] = mat3.create_from_quaternion(quat, dtype)
     return mat
 
 
@@ -123,7 +123,7 @@ def create_from_inverse_of_quaternion(quat, dtype=None):
     mat = create_identity(dtype)
 
     # we'll use Matrix33 for our conversion
-    mat[0:3, 0:3] = matrix33.create_from_inverse_of_quaternion(quat, dtype)
+    mat[0:3, 0:3] = mat3.create_from_inverse_of_quaternion(quat, dtype)
     return mat
 
 
@@ -169,7 +169,7 @@ def create_from_x_rotation(theta, dtype=None):
     .. seealso:: http://en.wikipedia.org/wiki/Rotation_matrix#In_three_dimensions
     """
     mat = create_identity(dtype)
-    mat[0:3, 0:3] = matrix33.create_from_x_rotation(theta, dtype)
+    mat[0:3, 0:3] = mat3.create_from_x_rotation(theta, dtype)
     return mat
 
 
@@ -184,7 +184,7 @@ def create_from_y_rotation(theta, dtype=None):
     .. seealso:: http://en.wikipedia.org/wiki/Rotation_matrix#In_three_dimensions
     """
     mat = create_identity(dtype)
-    mat[0:3, 0:3] = matrix33.create_from_y_rotation(theta, dtype)
+    mat[0:3, 0:3] = mat3.create_from_y_rotation(theta, dtype)
     return mat
 
 
@@ -199,7 +199,7 @@ def create_from_z_rotation(theta, dtype=None):
     .. seealso:: http://en.wikipedia.org/wiki/Rotation_matrix#In_three_dimensions
     """
     mat = create_identity(dtype)
-    mat[0:3, 0:3] = matrix33.create_from_z_rotation(theta, dtype)
+    mat[0:3, 0:3] = mat3.create_from_z_rotation(theta, dtype)
     return mat
 
 

@@ -16,7 +16,7 @@ conversions.
 
     # explicit creation
     m = Matrix4.identity()
-    m = Matrix4.from_matrix44(Matrix4())
+    m = Matrix4.from_mat4(Matrix4())
 
     # inferred conversions
     m = Matrix4(Quaternion())
@@ -29,7 +29,7 @@ conversions.
     q = m.quaternion
 
     # convert from quaternion back to matrix
-    m = q.matrix44
+    m = q.mat4
     m = Matrix4(q)
 
     # rotate a matrix by a quaternion
@@ -61,11 +61,12 @@ from numbers import Number
 import numpy as np
 from multipledispatch import dispatch
 from .base import BaseObject, BaseMatrix, BaseMatrix4, BaseQuaternion, BaseVector, NpProxy
-from .. import matrix44
+from ..funcs import mat4, mat3
+
 
 class Matrix4(BaseMatrix4):
-    _module = matrix44
-    _shape = (4,4,)
+    _module = mat4
+    _shape = (4, 4,)
 
     # m<c> style access
     #: The first row of this Matrix as a numpy.ndarray.
@@ -134,34 +135,34 @@ class Matrix4(BaseMatrix4):
     ########################
     # Creation
     @classmethod
-    def from_matrix33(cls, matrix, dtype=None):
+    def from_matrix3(cls, matrix, dtype=None):
         """Creates a Matrix4 from a Matrix33.
         """
-        return cls(matrix44.create_from_matrix33(matrix, dtype))
+        return cls(mat4.create_from_matrix3(matrix, dtype))
 
     @classmethod
     def perspective_projection(cls, fovy, aspect, near, far, dtype=None):
         """Creates a Matrix4 for use as a perspective projection matrix.
         """
-        return cls(matrix44.create_perspective_projection_matrix(fovy, aspect, near, far, dtype))
+        return cls(mat4.create_perspective_projection_matrix(fovy, aspect, near, far, dtype))
 
     @classmethod
     def perspective_projection_bounds(cls, left, right, top, bottom, near, far, dtype=None):
         """Creates a Matrix4 for use as a perspective projection matrix.
         """
-        return cls(matrix44.create_perspective_projection_matrix_from_bounds(left, right, top, bottom, near, far, dtype))
+        return cls(mat4.create_perspective_projection_matrix_from_bounds(left, right, top, bottom, near, far, dtype))
 
     @classmethod
     def orthogonal_projection(cls, left, right, top, bottom, near, far, dtype=None):
         """Creates a Matrix4 for use as an orthogonal projection matrix.
         """
-        return cls(matrix44.create_orthogonal_projection_matrix(left, right, top, bottom, near, far, dtype))
+        return cls(mat4.create_orthogonal_projection_matrix(left, right, top, bottom, near, far, dtype))
 
     @classmethod
     def from_translation(cls, translation, dtype=None):
         """Creates a Matrix4 from the specified translation.
         """
-        return cls(matrix44.create_from_translation(translation, dtype=dtype))
+        return cls(mat4.create_from_translation(translation, dtype=dtype))
 
     def __new__(cls, value=None, dtype=None):
         if value is not None:
@@ -169,12 +170,12 @@ class Matrix4(BaseMatrix4):
             if not isinstance(value, np.ndarray):
                 obj = np.array(value, dtype=dtype)
 
-            # matrix33
+            # matrix3
             if obj.shape == (3,3) or isinstance(obj, Matrix3):
-                obj = matrix44.create_from_matrix33(obj, dtype=dtype)
+                obj = mat4.create_from_matrix3(obj, dtype=dtype)
             # quaternion
             elif obj.shape == (4,) or isinstance(obj, Quaternion):
-                obj = matrix44.create_from_quaternion(obj, dtype=dtype)
+                obj = mat4.create_from_quaternion(obj, dtype=dtype)
         else:
             obj = np.zeros(cls._shape, dtype=dtype)
         obj = obj.view(cls)
@@ -217,20 +218,20 @@ class Matrix4(BaseMatrix4):
 
     @dispatch((BaseMatrix, np.ndarray, list))
     def __mul__(self, other):
-        return Matrix4(matrix44.multiply(self, Matrix4(other)))
+        return Matrix4(mat4.multiply(self, Matrix4(other)))
 
     ########################
     # Quaternions
     @dispatch(BaseQuaternion)
     def __mul__(self, other):
-        m = other.matrix44
+        m = other.mat4
         return self * m
 
     ########################
     # Vectors
     @dispatch(BaseVector)
     def __mul__(self, other):
-        return type(other)(matrix44.apply_to_vector(self, other))
+        return type(other)(mat4.apply_to_vector(self, other))
 
     ########################
     # Number
@@ -257,13 +258,13 @@ class Matrix4(BaseMatrix4):
     ########################
     # Methods and Properties
     @property
-    def matrix33(self):
+    def matrix3(self):
         """Returns a Matrix33 representing this matrix.
         """
         return Matrix3(self)
 
     @property
-    def matrix44(self):
+    def mat4(self):
         """Returns the Matrix4.
 
         This can be handy if you're not sure what type of Matrix class you have

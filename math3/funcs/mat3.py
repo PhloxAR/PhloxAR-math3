@@ -9,8 +9,8 @@ numpy.array.T method.
 """
 from __future__ import absolute_import, division, print_function
 import numpy as np
-from math3 import vector, quaternion, euler
-from math3.utils import all_parameters_as_numpy_arrays, parameters_as_numpy_arrays
+from . import vec, quat, euler
+from ..utils import all_parameters_as_numpy_arrays, parameters_as_numpy_arrays
 
 
 def create_identity(dtype=None):
@@ -22,14 +22,16 @@ def create_identity(dtype=None):
     """
     return np.identity(3, dtype=dtype)
 
+
 @all_parameters_as_numpy_arrays
-def create_from_matrix44(mat, dtype=None):
+def create_from_matrix4(mat, dtype=None):
     """Creates a Matrix33 from a Matrix44.
 
     :rtype: numpy.array
     :return: A matrix with shape (3,3) with the input matrix rotation.
     """
-    return np.array(mat[0:3,0:3], dtype=dtype)
+    return np.array(mat[0:3, 0:3], dtype=dtype)
+
 
 @parameters_as_numpy_arrays('eulers')
 def create_from_eulers(eulers, dtype=None):
@@ -42,7 +44,8 @@ def create_from_eulers(eulers, dtype=None):
     """
     dtype = dtype or eulers.dtype
 
-    pitch, roll, yaw = euler.pitch(eulers), euler.roll(eulers), euler.yaw(eulers)
+    pitch, roll, yaw = euler.pitch(eulers), euler.roll(eulers), euler.yaw(
+        eulers)
 
     sP = np.sin(pitch)
     cP = np.cos(pitch)
@@ -52,27 +55,27 @@ def create_from_eulers(eulers, dtype=None):
     cY = np.cos(yaw)
 
     return np.array(
-        [
-            # m1
             [
-                cY * cP,
-                -cY * sP * cR + sY * sR,
-                cY * sP * sR + sY * cR,
+                # m1
+                [
+                    cY * cP,
+                    -cY * sP * cR + sY * sR,
+                    cY * sP * sR + sY * cR,
+                ],
+                # m2
+                [
+                    sP,
+                    cP * cR,
+                    -cP * sR,
+                ],
+                # m3
+                [
+                    -sY * cP,
+                    sY * sP * cR + cY * sR,
+                    -sY * sP * sR + cY * cR,
+                ]
             ],
-            # m2
-            [
-                sP,
-                cP * cR,
-                -cP * sR,
-            ],
-            # m3
-            [
-                -sY * cP,
-                sY * sP * cR + cY * sR,
-                -sY * sP * sR + cY * cR,
-            ]
-        ],
-        dtype=dtype
+            dtype=dtype
     )
 
 
@@ -80,49 +83,49 @@ def create_from_eulers(eulers, dtype=None):
 def create_from_axis_rotation(axis, theta, dtype=None):
     """Creates a matrix from the specified theta rotation around an axis.
 
-    :param numpy.array axis: A (3,) vector specifying the axis of rotation.
+    :param numpy.array axis: A (3,) vec specifying the axis of rotation.
     :param float theta: A rotation speicified in radians.
     :rtype: numpy.array
     :return: A matrix with shape (3,3).
     """
     dtype = dtype or axis.dtype
 
-    axis = vector.normalise(axis)
-    x,y,z = axis
+    axis = vec.normalise(axis)
+    x, y, z = axis
 
-    s = np.sin(theta);
-    c = np.cos(theta);
-    t = 1 - c;
+    s = np.sin(theta)
+    c = np.cos(theta)
+    t = 1 - c
 
     # Construct the elements of the rotation matrix
     return np.array(
-        [
-            [ x * x * t + c,     y * x * t + z * s, z * x * t - y * s],
-            [ x * y * t - z * s, y * y * t + c,     z * y * t + x * s],
-            [ x * z * t + y * s, y * z * t - x * s, z * z * t + c]
-        ],
-        dtype= dtype
+            [
+                [x * x * t + c, y * x * t + z * s, z * x * t - y * s],
+                [x * y * t - z * s, y * y * t + c, z * y * t + x * s],
+                [x * z * t + y * s, y * z * t - x * s, z * z * t + c]
+            ],
+            dtype=dtype
     )
 
 
-@parameters_as_numpy_arrays('quat')
-def create_from_quaternion(quat, dtype=None):
+@parameters_as_numpy_arrays('quaternion')
+def create_from_quaternion(quaternion, dtype=None):
     """Creates a matrix with the same rotation as a quaternion.
 
-    :param quat: The quaternion to create the matrix from.
+    :param quaternion: The quaternion to create the matrix from.
     :rtype: numpy.array
     :return: A matrix with shape (3,3) with the quaternion's rotation.
     """
-    dtype = dtype or quat.dtype
+    dtype = dtype or quaternion.dtype
     # the quaternion must be normalised
-    if not np.isclose(np.linalg.norm(quat), 1.):
-        quat = quaternion.normalise(quat)
+    if not np.isclose(np.linalg.norm(quaternion), 1.):
+        quaternion = quat.normalise(quaternion)
 
-    x, y, z, w = quat
+    x, y, z, w = quaternion
 
-    y2 = y**2
-    x2 = x**2
-    z2 = z**2
+    y2 = y ** 2
+    x2 = x ** 2
+    z2 = z ** 2
     xy = x * y
     xz = x * z
     yz = y * z
@@ -131,37 +134,38 @@ def create_from_quaternion(quat, dtype=None):
     wz = w * z
 
     return np.array(
-        [
-            # m1
             [
-                # m11 = 1.0 - 2.0 * (q.y * q.y + q.z * q.z)
-                1.0 - 2.0 * (y2 + z2),
-                # m21 = 2.0 * (q.x * q.y - q.w * q.z)
-                2.0 * (xy - wz),
-                # m31 = 2.0 * (q.x * q.z + q.w * q.y)
-                2.0 * (xz + wy),
+                # m1
+                [
+                    # m11 = 1.0 - 2.0 * (q.y * q.y + q.z * q.z)
+                    1.0 - 2.0 * (y2 + z2),
+                    # m21 = 2.0 * (q.x * q.y - q.w * q.z)
+                    2.0 * (xy - wz),
+                    # m31 = 2.0 * (q.x * q.z + q.w * q.y)
+                    2.0 * (xz + wy),
+                ],
+                # m2
+                [
+                    # m12 = 2.0 * (q.x * q.y + q.w * q.z)
+                    2.0 * (xy + wz),
+                    # m22 = 1.0 - 2.0 * (q.x * q.x + q.z * q.z)
+                    1.0 - 2.0 * (x2 + z2),
+                    # m32 = 2.0 * (q.y * q.z - q.w * q.x)
+                    2.0 * (yz - wx),
+                ],
+                # m3
+                [
+                    # m13 = 2.0 * (q.x * q.z - q.w * q.y)
+                    2.0 * (xz - wy),
+                    # m23 = 2.0 * (q.y * q.z + q.w * q.x)
+                    2.0 * (yz + wx),
+                    # m33 = 1.0 - 2.0 * (q.x * q.x + q.y * q.y)
+                    1.0 - 2.0 * (x2 + y2),
+                ],
             ],
-            # m2
-            [
-                # m12 = 2.0 * (q.x * q.y + q.w * q.z)
-                2.0 * (xy + wz),
-                # m22 = 1.0 - 2.0 * (q.x * q.x + q.z * q.z)
-                1.0 - 2.0 * (x2 + z2),
-                # m32 = 2.0 * (q.y * q.z - q.w * q.x)
-                2.0 * (yz - wx),
-            ],
-            # m3
-            [
-                # m13 = 2.0 * (q.x * q.z - q.w * q.y)
-                2.0 * (xz - wy),
-                # m23 = 2.0 * (q.y * q.z + q.w * q.x)
-                2.0 * (yz + wx),
-                # m33 = 1.0 - 2.0 * (q.x * q.x + q.y * q.y)
-                1.0 - 2.0 * (x2 + y2),
-            ],
-        ],
-        dtype=dtype
+            dtype=dtype
     )
+
 
 @parameters_as_numpy_arrays('quat')
 def create_from_inverse_of_quaternion(quat, dtype=None):
@@ -176,9 +180,9 @@ def create_from_inverse_of_quaternion(quat, dtype=None):
 
     x, y, z, w = quat
 
-    x2 = x**2
-    y2 = y**2
-    z2 = z**2
+    x2 = x ** 2
+    y2 = y ** 2
+    z2 = z ** 2
     wx = w * x
     wy = w * y
     xy = x * y
@@ -187,37 +191,38 @@ def create_from_inverse_of_quaternion(quat, dtype=None):
     yz = y * z
 
     return np.array(
-        [
-            # m1
             [
-                # m11 = 1.0 - 2.0 * (q.y * q.y + q.z * q.z)
-                1.0 - 2.0 * (y2 + z2),
-                # m21 = 2.0 * (q.x * q.y + q.w * q.z)
-                2.0 * (xy + wz),
-                # m31 = 2.0 * (q.x * q.z - q.w * q.y)
-                2.0 * (xz - wy),
+                # m1
+                [
+                    # m11 = 1.0 - 2.0 * (q.y * q.y + q.z * q.z)
+                    1.0 - 2.0 * (y2 + z2),
+                    # m21 = 2.0 * (q.x * q.y + q.w * q.z)
+                    2.0 * (xy + wz),
+                    # m31 = 2.0 * (q.x * q.z - q.w * q.y)
+                    2.0 * (xz - wy),
+                ],
+                # m2
+                [
+                    # m12 = 2.0 * (q.x * q.y - q.w * q.z)
+                    2.0 * (xy - wz),
+                    # m22 = 1.0 - 2.0 * (q.x * q.x + q.z * q.z)
+                    1.0 - 2.0 * (x2 + z2),
+                    # m32 = 2.0 * (q.y * q.z + q.w * q.x)
+                    2.0 * (yz + wx),
+                ],
+                # m3
+                [
+                    # m13 = 2.0 * ( q.x * q.z + q.w * q.y)
+                    2.0 * (xz + wy),
+                    # m23 = 2.0 * (q.y * q.z - q.w * q.x)
+                    2.0 * (yz - wx),
+                    # m33 = 1.0 - 2.0 * (q.x * q.x + q.y * q.y)
+                    1.0 - 2.0 * (x2 + y2),
+                ]
             ],
-            # m2
-            [
-                # m12 = 2.0 * (q.x * q.y - q.w * q.z)
-                2.0 * (xy - wz),
-                # m22 = 1.0 - 2.0 * (q.x * q.x + q.z * q.z)
-                1.0 - 2.0 * (x2 + z2),
-                # m32 = 2.0 * (q.y * q.z + q.w * q.x)
-                2.0 * (yz + wx),
-            ],
-            # m3
-            [
-                # m13 = 2.0 * ( q.x * q.z + q.w * q.y)
-                2.0 * (xz + wy),
-                # m23 = 2.0 * (q.y * q.z - q.w * q.x)
-                2.0 * (yz - wx),
-                # m33 = 1.0 - 2.0 * (q.x * q.x + q.y * q.y)
-                1.0 - 2.0 * (x2 + y2),
-            ]
-        ],
-        dtype=dtype
+            dtype=dtype
     )
+
 
 def create_from_scale(scale, dtype=None):
     """Creates an identity matrix with the scale set.
@@ -234,6 +239,7 @@ def create_from_scale(scale, dtype=None):
         m = m.astype(dtype)
     return m
 
+
 def create_from_x_rotation(theta, dtype=None):
     """Creates a matrix with the specified rotation about the X axis.
 
@@ -248,13 +254,14 @@ def create_from_x_rotation(theta, dtype=None):
     sinT = np.sin(theta)
 
     return np.array(
-        [
-            [ 1.0, 0.0, 0.0 ],
-            [ 0.0, cosT,-sinT ],
-            [ 0.0, sinT, cosT ]
-        ],
-        dtype=dtype
+            [
+                [1.0, 0.0, 0.0],
+                [0.0, cosT, -sinT],
+                [0.0, sinT, cosT]
+            ],
+            dtype=dtype
     )
+
 
 def create_from_y_rotation(theta, dtype=None):
     """Creates a matrix with the specified rotation about the Y axis.
@@ -270,13 +277,14 @@ def create_from_y_rotation(theta, dtype=None):
     sinT = np.sin(theta)
 
     return np.array(
-        [
-            [ cosT, 0.0,sinT ],
-            [ 0.0, 1.0, 0.0 ],
-            [-sinT, 0.0, cosT ]
-        ],
-        dtype=dtype
+            [
+                [cosT, 0.0, sinT],
+                [0.0, 1.0, 0.0],
+                [-sinT, 0.0, cosT]
+            ],
+            dtype=dtype
     )
+
 
 def create_from_z_rotation(theta, dtype=None):
     """Creates a matrix with the specified rotation about the Z axis.
@@ -292,13 +300,14 @@ def create_from_z_rotation(theta, dtype=None):
     sinT = np.sin(theta)
 
     return np.array(
-        [
-            [ cosT,-sinT, 0.0 ],
-            [ sinT, cosT, 0.0 ],
-            [ 0.0, 0.0, 1.0 ]
-        ],
-        dtype=dtype
+            [
+                [cosT, -sinT, 0.0],
+                [sinT, cosT, 0.0],
+                [0.0, 0.0, 1.0]
+            ],
+            dtype=dtype
     )
+
 
 @parameters_as_numpy_arrays('vec')
 def apply_to_vector(mat, vec):
@@ -319,6 +328,7 @@ def apply_to_vector(mat, vec):
     else:
         raise ValueError("Vector size unsupported")
 
+
 def multiply(m1, m2):
     """Multiply two matricies, m1 . m2.
 
@@ -334,6 +344,7 @@ def multiply(m1, m2):
     """
     return np.dot(m1, m2)
 
+
 def inverse(mat):
     """Returns the inverse of the matrix.
 
@@ -346,6 +357,7 @@ def inverse(mat):
     .. seealso:: http://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.inv.html
     """
     return np.linalg.inv(mat)
+
 
 def create_direction_scale(direction, scale):
     """Creates a matrix which can apply a directional scaling to a set of vectors.
@@ -377,43 +389,43 @@ def create_direction_scale(direction, scale):
     k is the scaling factor
     """
     if not np.isclose(np.linalg.norm(direction), 1.):
-        direction = vector.normalise(direction)
+        direction = vec.normalise(direction)
 
-    x,y,z = direction
+    x, y, z = direction
 
-    x2 = x**2.
-    y2 = y**2.
-    z2 = z**2
+    x2 = x ** 2.
+    y2 = y ** 2.
+    z2 = z ** 2
 
     scaleMinus1 = scale - 1.
     return np.array(
-        [
-            # m1
             [
-                # m11 = 1 + (k - 1)n.x^2
-                1. + scaleMinus1 * x2,
-                # m12 = (k - 1)n.x n.y^2
-                scaleMinus1 * x * y2,
-                # m13 = (k - 1)n.x n.z
-                scaleMinus1 * x * z
-            ],
-            # m2
-            [
-                # m21 = (k - 1)n.x n.y
-                scaleMinus1 * x * y,
-                # m22 = 1 + (k - 1)n.y
-                1. + scaleMinus1 * y,
-                # m23 = (k - 1)n.y n.z
-                scaleMinus1 * y * z
-            ],
-            # m3
-            [
-                # m31 = (k - 1)n.x n.z
-                scaleMinus1 * x * z,
-                # m32 = (k - 1)n.y n.z
-                scaleMinus1 * y * z,
-                # m33 = 1 + (k - 1)n.z^2
-                1. + scaleMinus1 * z2
+                # m1
+                [
+                    # m11 = 1 + (k - 1)n.x^2
+                    1. + scaleMinus1 * x2,
+                    # m12 = (k - 1)n.x n.y^2
+                    scaleMinus1 * x * y2,
+                    # m13 = (k - 1)n.x n.z
+                    scaleMinus1 * x * z
+                ],
+                # m2
+                [
+                    # m21 = (k - 1)n.x n.y
+                    scaleMinus1 * x * y,
+                    # m22 = 1 + (k - 1)n.y
+                    1. + scaleMinus1 * y,
+                    # m23 = (k - 1)n.y n.z
+                    scaleMinus1 * y * z
+                ],
+                # m3
+                [
+                    # m31 = (k - 1)n.x n.z
+                    scaleMinus1 * x * z,
+                    # m32 = (k - 1)n.y n.z
+                    scaleMinus1 * y * z,
+                    # m33 = 1 + (k - 1)n.z^2
+                    1. + scaleMinus1 * z2
+                ]
             ]
-        ]
     )
