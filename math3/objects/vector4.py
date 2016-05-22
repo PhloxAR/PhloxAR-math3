@@ -47,14 +47,14 @@ from __future__ import absolute_import
 from numbers import Number
 import numpy as np
 from multipledispatch import dispatch
-from .base import BaseObject, BaseVector4, BaseMatrix4, NpProxy
-from ..funcs import vec4
+from .basecls import BaseObject, BaseVector4, BaseMatrix4, NpProxy
+from ..funcs import fvec4
 
 
 # TODO: add < <= > >= == != operators
 
 class Vector4(BaseVector4):
-    _module = vec4
+    _module = fvec4
     _shape = (4,)
 
     #: The X value of this Vector.
@@ -88,19 +88,25 @@ class Vector4(BaseVector4):
 
         By default, the W value is 0.0.
         """
-        return cls(vec4.create_from_vector3(vector, w, dtype))
+        return cls(fvec4.create_from_vector3(vector, w, dtype))
 
-    def __new__(cls, value=None, dtype=None):
-        if value is not None:
-            obj = value
-            if not isinstance(value, np.ndarray):
-                obj = np.array(value, dtype=dtype)
+    def __new__(cls, x=None, y=None, z=None, dtype=None):
+        if isinstance(x, list) and len(x) == 3:
+            obj = x
+            if not isinstance(x, np.ndarray):
+                obj = np.array(x, dtype=dtype)
 
-            # matrix44
-            if obj.shape in ((4, 4,)) or isinstance(obj, BaseMatrix4):
-                obj = vec4.create_from_matrix44_translation(obj, dtype=dtype)
+            # matrix4
+            if obj.shape in (4, 4,) or isinstance(obj, BaseMatrix4):
+                obj = fvec4.create_from_matrix4_translation(obj, dtype=dtype)
+        elif x is not None and y is not None and z is not None:
+            obj = np.array((x, y, z), dtype)
+
+            if obj.shape in (4, 4,) or isinstance(obj, BaseMatrix4):
+                obj = fvec4.create_from_matrix4_translation(obj, dtype=dtype)
         else:
             obj = np.zeros(cls._shape, dtype=dtype)
+
         obj = obj.view(cls)
         return super(Vector4, cls).__new__(cls, obj)
 
@@ -214,7 +220,7 @@ class Vector4(BaseVector4):
     def vector3(self):
         """Returns a Vector3 and the W component as a tuple.
         """
-        return (Vector3(self[:3]), self[3])
+        return Vector3(self[:3]), self[3]
 
 
 from .matrix4 import Matrix4

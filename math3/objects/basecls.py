@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import numpy as np
-from ..funcs import vec3, vec
+from ..funcs import fvec3, fvec
 
 
 class NpProxy(object):
@@ -28,7 +28,6 @@ class BaseObject(np.ndarray):
     def _unsupported_type(self, method, other):
         raise ValueError('Cannot {} a {} to a {}'.format(method, type(other).__name__, type(self).__name__))
 
-    ########################
     # Redirect assignment operators
     def __iadd__(self, other):
         self[:] = self.__add__(other)
@@ -56,10 +55,10 @@ class BaseMatrix(BaseObject):
         return cls(cls._module.create_identity(dtype), dtype)
 
     @classmethod
-    def from_eulers(cls, eulers, dtype=None):
+    def from_euler(cls, euler, dtype=None):
         """Creates a Matrix from the specified Euler angles.
         """
-        return cls(cls._module.create_from_eulers(eulers, dtype=dtype))
+        return cls(cls._module.create_from_eulers(euler, dtype=dtype))
 
     @classmethod
     def from_quaternion(cls, quat, dtype=None):
@@ -122,19 +121,19 @@ class BaseVector(BaseObject):
 
     @length.setter
     def length(self, length):
-        self[:] = vec.set_length(self, length)
+        self[:] = fvec.set_length(self, length)
 
     def dot(self, other):
-        return vec.dot(self, type(self)(other))
+        return fvec.dot(self, type(self)(other))
 
     def cross(self, other):
-        return type(self)(vec3.cross(self[:3], other[:3]))
+        return type(self)(fvec3.cross(self[:3], other[:3]))
 
     def interpolate(self, other, delta):
-        return type(self)(vec.interpolate(self, type(self)(other), delta))
+        return type(self)(fvec.interpolate(self, type(self)(other), delta))
 
     def normal(self, v2, v3, normalise_result=True):
-        return type(self)(vec3.generate_normals(self, type(self)(v2), type(self)(v3), normalise_result))
+        return type(self)(fvec3.generate_normals(self, type(self)(v2), type(self)(v3), normalise_result))
 
 
 class BaseQuaternion(BaseObject):

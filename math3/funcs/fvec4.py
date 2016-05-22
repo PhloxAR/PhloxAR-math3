@@ -2,12 +2,14 @@
 """
 Provides functions for creating and manipulating 4D vectors.
 """
-from __future__ import absolute_import, division, print_function
+from __future__ import division, print_function
+from __future__ import absolute_import, unicode_literals
+
 import numpy as np
-from math3.utils import parameters_as_numpy_arrays
+from ..utils import parameters_as_numpy_arrays
 
 # import common vector operations
-from .vec import *
+from .fvec import *
 
 
 def create(x=0., y=0., z=0., w=0.0, dtype=None):
@@ -39,7 +41,7 @@ def create_from_vector3(vector, w=0., dtype=None):
 
 
 @parameters_as_numpy_arrays('mat')
-def create_from_matrix44_translation(mat, dtype=None):
+def create_from_matrix4_translation(mat, dtype=None):
     return np.array(mat[3, :4], dtype=dtype)
 
 

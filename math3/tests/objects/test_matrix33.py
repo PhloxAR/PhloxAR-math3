@@ -78,7 +78,7 @@ class test_object_matrix33(unittest.TestCase):
 
     def test_create_from_eulers(self):
         e = Vector3([1,2,3])
-        m = Matrix3.from_eulers(e)
+        m = Matrix3.from_euler(e)
         self.assertTrue(np.array_equal(m, matrix33.create_from_eulers([1,2,3])))
 
     def test_create_from_quaternion(self):

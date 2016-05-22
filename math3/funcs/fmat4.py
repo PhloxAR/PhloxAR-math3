@@ -9,7 +9,7 @@ numpy.array.T method.
 """
 from __future__ import absolute_import, division, print_function
 import numpy as np
-from . import mat3
+from . import fmat3
 from math3.utils import all_parameters_as_numpy_arrays, \
     parameters_as_numpy_arrays
 
@@ -64,7 +64,7 @@ def create_from_eulers(eulers, dtype=None):
     mat = create_identity(dtype)
 
     # we'll use Matrix33 for our conversion
-    mat[0:3, 0:3] = mat3.create_from_eulers(eulers, dtype)
+    mat[0:3, 0:3] = fmat3.create_from_eulers(eulers, dtype)
     return mat
 
 
@@ -84,7 +84,7 @@ def create_from_axis_rotation(axis, theta, dtype=None):
     mat = create_identity(dtype)
 
     # we'll use Matrix33 for our conversion
-    mat[0:3, 0:3] = mat3.create_from_axis_rotation(axis, theta, dtype)
+    mat[0:3, 0:3] = fmat3.create_from_axis_rotation(axis, theta, dtype)
     return mat
 
 
@@ -102,7 +102,7 @@ def create_from_quaternion(quat, dtype=None):
     mat = create_identity(dtype)
 
     # we'll use Matrix33 for our conversion
-    mat[0:3, 0:3] = mat3.create_from_quaternion(quat, dtype)
+    mat[0:3, 0:3] = fmat3.create_from_quaternion(quat, dtype)
     return mat
 
 
@@ -123,7 +123,7 @@ def create_from_inverse_of_quaternion(quat, dtype=None):
     mat = create_identity(dtype)
 
     # we'll use Matrix33 for our conversion
-    mat[0:3, 0:3] = mat3.create_from_inverse_of_quaternion(quat, dtype)
+    mat[0:3, 0:3] = fmat3.create_from_inverse_of_quaternion(quat, dtype)
     return mat
 
 
@@ -169,7 +169,7 @@ def create_from_x_rotation(theta, dtype=None):
     .. seealso:: http://en.wikipedia.org/wiki/Rotation_matrix#In_three_dimensions
     """
     mat = create_identity(dtype)
-    mat[0:3, 0:3] = mat3.create_from_x_rotation(theta, dtype)
+    mat[0:3, 0:3] = fmat3.create_from_x_rotation(theta, dtype)
     return mat
 
 
@@ -184,7 +184,7 @@ def create_from_y_rotation(theta, dtype=None):
     .. seealso:: http://en.wikipedia.org/wiki/Rotation_matrix#In_three_dimensions
     """
     mat = create_identity(dtype)
-    mat[0:3, 0:3] = mat3.create_from_y_rotation(theta, dtype)
+    mat[0:3, 0:3] = fmat3.create_from_y_rotation(theta, dtype)
     return mat
 
 
@@ -199,7 +199,7 @@ def create_from_z_rotation(theta, dtype=None):
     .. seealso:: http://en.wikipedia.org/wiki/Rotation_matrix#In_three_dimensions
     """
     mat = create_identity(dtype)
-    mat[0:3, 0:3] = mat3.create_from_z_rotation(theta, dtype)
+    mat[0:3, 0:3] = fmat3.create_from_z_rotation(theta, dtype)
     return mat
 
 

@@ -6,7 +6,7 @@ from __future__ import division, print_function
 from __future__ import absolute_import, unicode_literals
 
 # import common vector operations
-from .vec import *
+from .fvec import *
 
 
 def create(x=0., y=0., z=0., dtype=None):
@@ -36,7 +36,7 @@ def create_from_vector4(vector, dtype=None):
 
 
 @parameters_as_numpy_arrays('mat')
-def create_from_matrix44_translation(mat, dtype=None):
+def create_from_matrix4_translation(mat, dtype=None):
     return np.array(mat[3, :3], dtype=dtype)
 
 

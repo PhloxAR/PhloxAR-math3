@@ -57,16 +57,16 @@ conversions.
     # first column
     c1 = m.c1
 """
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 from numbers import Number
 import numpy as np
 from multipledispatch import dispatch
-from .base import BaseObject, BaseMatrix, BaseMatrix4, BaseQuaternion, BaseVector, NpProxy
-from ..funcs import mat4, mat3
+from .basecls import BaseObject, BaseMatrix, BaseMatrix4, BaseQuaternion, BaseVector, NpProxy
+from ..funcs import fmat4
 
 
 class Matrix4(BaseMatrix4):
-    _module = mat4
+    _module = fmat4
     _shape = (4, 4,)
 
     # m<c> style access
@@ -139,31 +139,31 @@ class Matrix4(BaseMatrix4):
     def from_matrix3(cls, matrix, dtype=None):
         """Creates a Matrix4 from a Matrix33.
         """
-        return cls(mat4.create_from_matrix3(matrix, dtype))
+        return cls(fmat4.create_from_matrix3(matrix, dtype))
 
     @classmethod
     def perspective_projection(cls, fovy, aspect, near, far, dtype=None):
         """Creates a Matrix4 for use as a perspective projection matrix.
         """
-        return cls(mat4.create_perspective_projection_matrix(fovy, aspect, near, far, dtype))
+        return cls(fmat4.create_perspective_projection_matrix(fovy, aspect, near, far, dtype))
 
     @classmethod
     def perspective_projection_bounds(cls, left, right, top, bottom, near, far, dtype=None):
         """Creates a Matrix4 for use as a perspective projection matrix.
         """
-        return cls(mat4.create_perspective_projection_matrix_from_bounds(left, right, top, bottom, near, far, dtype))
+        return cls(fmat4.create_perspective_projection_matrix_from_bounds(left, right, top, bottom, near, far, dtype))
 
     @classmethod
     def orthogonal_projection(cls, left, right, top, bottom, near, far, dtype=None):
         """Creates a Matrix4 for use as an orthogonal projection matrix.
         """
-        return cls(mat4.create_orthogonal_projection_matrix(left, right, top, bottom, near, far, dtype))
+        return cls(fmat4.create_orthogonal_projection_matrix(left, right, top, bottom, near, far, dtype))
 
     @classmethod
     def from_translation(cls, translation, dtype=None):
         """Creates a Matrix4 from the specified translation.
         """
-        return cls(mat4.create_from_translation(translation, dtype=dtype))
+        return cls(fmat4.create_from_translation(translation, dtype=dtype))
 
     def __new__(cls, value=None, dtype=None):
         if value is not None:
@@ -173,10 +173,10 @@ class Matrix4(BaseMatrix4):
 
             # matrix3
             if obj.shape == (3,3) or isinstance(obj, Matrix3):
-                obj = mat4.create_from_matrix3(obj, dtype=dtype)
+                obj = fmat4.create_from_matrix3(obj, dtype=dtype)
             # quaternion
             elif obj.shape == (4,) or isinstance(obj, Quaternion):
-                obj = mat4.create_from_quaternion(obj, dtype=dtype)
+                obj = fmat4.create_from_quaternion(obj, dtype=dtype)
         else:
             obj = np.zeros(cls._shape, dtype=dtype)
         obj = obj.view(cls)
@@ -219,7 +219,7 @@ class Matrix4(BaseMatrix4):
 
     @dispatch((BaseMatrix, np.ndarray, list))
     def __mul__(self, other):
-        return Matrix4(mat4.multiply(self, Matrix4(other)))
+        return Matrix4(fmat4.multiply(self, Matrix4(other)))
 
     ########################
     # Quaternions
@@ -232,7 +232,7 @@ class Matrix4(BaseMatrix4):
     # Vectors
     @dispatch(BaseVector)
     def __mul__(self, other):
-        return type(other)(mat4.apply_to_vector(self, other))
+        return type(other)(fmat4.apply_to_vector(self, other))
 
     ########################
     # Number

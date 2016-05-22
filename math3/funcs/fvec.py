@@ -4,7 +4,7 @@
 from __future__ import absolute_import, division, print_function
 import numpy as np
 
-from math3.utils import all_parameters_as_numpy_arrays, parameters_as_numpy_arrays
+from ..utils import all_parameters_as_numpy_arrays, parameters_as_numpy_arrays
 
 
 @all_parameters_as_numpy_arrays

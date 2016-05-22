@@ -44,14 +44,14 @@ from __future__ import absolute_import, division
 from numbers import Number
 import numpy as np
 from multipledispatch import dispatch
-from .base import BaseObject, BaseVector3, BaseMatrix4, NpProxy
-from ..funcs import vec3
+from .basecls import BaseObject, BaseVector3, BaseMatrix4, NpProxy
+from ..funcs import fvec3
 
 
 # TODO: add < <= > >= == != operators
 
 class Vector3(BaseVector3):
-    _module = vec3
+    _module = fvec3
     _shape = (3,)
 
     #: The X value of this Vector.
@@ -75,20 +75,26 @@ class Vector3(BaseVector3):
 
         Returns the Vector3 and the W component as a tuple.
         """
-        vec, w = vec3.create_from_vector4(vector, dtype)
-        return (cls(vec), w)
+        vec, w = fvec3.create_from_vector4(vector, dtype)
+        return cls(vec), w
 
-    def __new__(cls, value=None, w=0.0, dtype=None):
-        if value is not None:
-            obj = value
-            if not isinstance(value, np.ndarray):
-                obj = np.array(value, dtype=dtype)
+    def __new__(cls, x=None, y=None, z=None, w=0.0, dtype=None):
+        if isinstance(x, list) and len(x) == 3:
+            obj = x
+            if not isinstance(x, np.ndarray):
+                obj = np.array(x, dtype=dtype)
 
-            # matrix44
-            if obj.shape in ((4, 4,)) or isinstance(obj, BaseMatrix4):
-                obj = vec3.create_from_matrix44_translation(obj, dtype=dtype)
+            # matrix4
+            if obj.shape in (4, 4,) or isinstance(obj, BaseMatrix4):
+                obj = fvec3.create_from_matrix4_translation(obj, dtype=dtype)
+        elif x is not None and y is not None and z is not None:
+            obj = np.array((x, y, z), dtype)
+
+            if obj.shape in (4, 4,) or isinstance(obj, BaseMatrix4):
+                obj = fvec3.create_from_matrix4_translation(obj, dtype=dtype)
         else:
             obj = np.zeros(cls._shape, dtype=dtype)
+
         obj = obj.view(cls)
         return super(Vector3, cls).__new__(cls, obj)
 

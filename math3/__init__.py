@@ -5,6 +5,7 @@ from __future__ import absolute_import, unicode_literals
 # this is used by the setup.py script
 from .version import __version__
 
+from . import funcs
 
 from .objects import (
     Matrix3,
@@ -30,5 +31,6 @@ __all__ = [
     'mat3',
     'vec3',
     'vec4',
+    'funcs',
 ]
 

@@ -3,7 +3,7 @@
 """
 from __future__ import absolute_import, division, print_function
 import numpy as np
-from ..funcs import vec, vec4, euler
+from ..funcs import fvec, fvec4, euler
 from ..utils import all_parameters_as_numpy_arrays, parameters_as_numpy_arrays
 
 
@@ -73,7 +73,7 @@ def create_from_axis_rotation(axis, theta, dtype=None):
     dtype = dtype or axis.dtype
     # make sure the vector is normalised
     if not np.isclose(np.linalg.norm(axis), 1.):
-        axis = vec.normalise(axis)
+        axis = fvec.normalise(axis)
 
     thetaOver2 = theta * 0.5
     sinThetaOver2 = np.sin(thetaOver2)
@@ -256,7 +256,7 @@ def squared_length(quat):
         Otherwise the result will be an array of scalars with shape
         vec.ndim with the last dimension being size 1.
     """
-    return vec4.squared_length(quat)
+    return fvec4.squared_length(quat)
 
 
 def length(quat):
@@ -268,7 +268,7 @@ def length(quat):
         Otherwise the result will be an array of scalars with shape
         vec.ndim with the last dimension being size 1.
     """
-    return vec4.length(quat)
+    return fvec4.length(quat)
 
 
 def normalise(quat):
@@ -280,7 +280,7 @@ def normalise(quat):
     :rtype: numpy.array
     :return: The normalised quaternion(s).
     """
-    return vec4.normalise(quat)
+    return fvec4.normalise(quat)
 
 
 def rotation_angle(quat):
@@ -338,7 +338,7 @@ def dot(quat1, quat2):
         Otherwise the result will be an array of scalars with shape
         vec.ndim with the last dimension being size 1.
     """
-    return vec4.dot(quat1, quat2)
+    return fvec4.dot(quat1, quat2)
 
 
 @all_parameters_as_numpy_arrays

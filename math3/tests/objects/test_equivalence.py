@@ -34,7 +34,7 @@ class test_matrix_quaternion(unittest.TestCase):
         m = Matrix3.from_x_rotation(np.pi / 2.)
         q = Quaternion.from_x_rotation(np.pi / 2.)
         qm = Matrix3.from_quaternion(q)
-        em = Matrix3.from_eulers(eulers)
+        em = Matrix3.from_euler(eulers)
         self.assertTrue(np.allclose(qm, m))
         self.assertTrue(np.allclose(qm, em))
         self.assertTrue(np.allclose(m, em))

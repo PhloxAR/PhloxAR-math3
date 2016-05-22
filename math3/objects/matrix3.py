@@ -61,13 +61,13 @@ from __future__ import absolute_import
 from numbers import Number
 import numpy as np
 from multipledispatch import dispatch
-from .base import BaseObject, BaseMatrix, BaseMatrix3, BaseQuaternion, \
+from .basecls import BaseObject, BaseMatrix, BaseMatrix3, BaseQuaternion, \
     BaseVector, NpProxy
-from ..funcs import mat4, mat3
+from ..funcs import fmat4, fmat3
 
 
 class Matrix3(BaseMatrix3):
-    _module = mat4
+    _module = fmat3
     _shape = (3, 3,)
 
     # m<c> style access
@@ -122,7 +122,7 @@ class Matrix3(BaseMatrix3):
 
         The Matrix4 translation will be lost.
         """
-        return cls(mat3.create_from_matrix4(matrix, dtype))
+        return cls(fmat3.create_from_matrix4(matrix, dtype))
 
     def __new__(cls, value=None, dtype=None):
         if value is not None:
@@ -132,10 +132,10 @@ class Matrix3(BaseMatrix3):
 
             # matrix4
             if obj.shape == (4, 4) or isinstance(obj, Matrix4):
-                obj = mat3.create_from_matrix4(obj, dtype=dtype)
+                obj = fmat3.create_from_matrix4(obj, dtype=dtype)
             # quaternion
             elif obj.shape == (4,) or isinstance(obj, Quaternion):
-                obj = mat3.create_from_quaternion(obj, dtype=dtype)
+                obj = fmat3.create_from_quaternion(obj, dtype=dtype)
         else:
             obj = np.zeros(cls._shape, dtype=dtype)
         obj = obj.view(cls)
@@ -179,7 +179,7 @@ class Matrix3(BaseMatrix3):
 
     @dispatch((BaseMatrix, np.ndarray, list))
     def __mul__(self, other):
-        return Matrix3(mat3.multiply(self, Matrix3(other)))
+        return Matrix3(fmat3.multiply(self, Matrix3(other)))
 
     ########################
     # Quaternions
@@ -192,7 +192,7 @@ class Matrix3(BaseMatrix3):
     # Vectors
     @dispatch(BaseVector)
     def __mul__(self, other):
-        return type(other)(mat3.apply_to_vector(self, other))
+        return type(other)(fmat3.apply_to_vector(self, other))
 
     ########################
     # Number

@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
-"""Provides common utility functions.
 """
+Provides common utility functions.
+"""
+from __future__ import division, print_function
+from __future__ import absolute_import, unicode_literals
 import inspect
 from functools import wraps
 import numpy as np
@@ -29,7 +32,8 @@ def all_parameters_as_numpy_arrays(fn):
 
 
 def parameters_as_numpy_arrays(*args_to_convert):
-    """Converts specific arguments to numpy arrays.
+    """
+    Converts specific arguments to numpy arrays.
 
     Used as a decorator to reduce duplicate code.
 
@@ -49,7 +53,7 @@ def parameters_as_numpy_arrays(*args_to_convert):
         # or the decorator will hide the function from our doc generator
         @wraps(fn)
         def wrapper(*args, **kwargs):
-            # get the arguements of the function we're decorating
+            # get the arguments of the function we're decorating
             fn_args = inspect.getargspec(fn)
 
             # convert any values that are specified

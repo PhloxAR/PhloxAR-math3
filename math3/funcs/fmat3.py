@@ -9,7 +9,7 @@ numpy.array.T method.
 """
 from __future__ import absolute_import, division, print_function
 import numpy as np
-from . import vec, quat, euler
+from . import fvec, fquat, euler
 from ..utils import all_parameters_as_numpy_arrays, parameters_as_numpy_arrays
 
 
@@ -90,7 +90,7 @@ def create_from_axis_rotation(axis, theta, dtype=None):
     """
     dtype = dtype or axis.dtype
 
-    axis = vec.normalise(axis)
+    axis = fvec.normalise(axis)
     x, y, z = axis
 
     s = np.sin(theta)
@@ -119,7 +119,7 @@ def create_from_quaternion(quaternion, dtype=None):
     dtype = dtype or quaternion.dtype
     # the quaternion must be normalised
     if not np.isclose(np.linalg.norm(quaternion), 1.):
-        quaternion = quat.normalise(quaternion)
+        quaternion = fquat.normalise(quaternion)
 
     x, y, z, w = quaternion
 
@@ -389,7 +389,7 @@ def create_direction_scale(direction, scale):
     k is the scaling factor
     """
     if not np.isclose(np.linalg.norm(direction), 1.):
-        direction = vec.normalise(direction)
+        direction = fvec.normalise(direction)
 
     x, y, z = direction
 
